@@ -282,14 +282,15 @@ Proof. simpl. reflexivity. Qed.
     model of the [orb] tests above.) The function should return [true]
     if either or both of its inputs are [false]. *)
 
-Definition nandb (b1:bool) (b2:bool) : bool :=
+Definition nandb (b1:bool) (b2:bool) : bool := negb (andb b1 b2).
+(**
   match b1 with
     | false => true
     | true => negb b2
-  end.
+  end. *)
 
 Example test_nandb1:(nandb true false) = true.
-Proof. reflexivity. Qed.
+Proof. unfold nandb. reflexivity. Qed.
 Example test_nandb2:(nandb false false) = true.
 Proof. reflexivity. Qed.
 Example test_nandb3:(nandb false true) = true.
