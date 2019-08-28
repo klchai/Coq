@@ -18,9 +18,7 @@ From LF Require Export Poly.
 (* ################################################################# *)
 (** * The [apply] Tactic *)
 
-(** We often encounter situations where the goal to be proved is
-    _exactly_ the same as some hypothesis in the context or some
-    previously proved lemma. *)
+(** 我们经常会遇到待证目标与上下文中的前提或已证引理刚好_相同_的情况。*)
 
 Theorem silly1 : forall (n m o p : nat),
      n = m  ->
@@ -30,16 +28,14 @@ Proof.
   intros n m o p eq1 eq2.
   rewrite <- eq1.
 
-(** Here, we could finish with "[rewrite -> eq2.  reflexivity.]" as we
-    have done several times before.  We can achieve the same effect in
-    a single step by using the [apply] tactic instead: *)
+(** 我们可以像之前那样用"rewrite → eq2. reflexivity."来完成。
+    不过如果我们使用 [apply] 策略，只需一步就能达到同样的效果： *)
 
   apply eq2.  Qed.
 
-(** The [apply] tactic also works with _conditional_ hypotheses
-    and lemmas: if the statement being applied is an implication, then
-    the premises of this implication will be added to the list of
-    subgoals needing to be proved. *)
+(** [apply] 策略也可以配合条件（Conditional）假设和引理来使用：
+    如果被应用的语句是一个蕴含式，那么该蕴含式的前提就会被添加到
+    待证子目标列表中。*)
 
 Theorem silly2 : forall (n m o p : nat),
      n = m  ->
@@ -49,13 +45,11 @@ Proof.
   intros n m o p eq1 eq2.
   apply eq2. apply eq1.  Qed.
 
-(** Typically, when we use [apply H], the statement [H] will
-    begin with a [forall] that binds some _universal variables_.  When
-    Coq matches the current goal against the conclusion of [H], it
-    will try to find appropriate values for these variables.  For
-    example, when we do [apply eq2] in the following proof, the
-    universal variable [q] in [eq2] gets instantiated with [n] and [r]
-    gets instantiated with [m]. *)
+(** 通常，当我们使用 [apply H] 时，语句 [H] 会以一个绑定了某些 通用变量
+    （Universal Variables） 的 [∀] 开始。在 Coq 针对 [H] 的结论匹配当前
+    目标时，它会尝试为这些变量查找适当的值。例如， 当我们在以下证明中执行
+    [apply eq2] 时，[eq2] 中的通用变量 [q] 会以 [n] 实例化，
+    而 [r] 会以 [m] 实例化.*)
 
 Theorem silly2a : forall (n m : nat),
      (n,n) = (m,m)  ->
@@ -73,14 +67,11 @@ Theorem silly_ex :
      (forall n, evenb n = true -> oddb (S n) = true) ->
      oddb 3 = true ->
      evenb 4 = true.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. apply H0. Qed.
 (** [] *)
 
-(** To use the [apply] tactic, the (conclusion of the) fact
-    being applied must match the goal exactly -- for example, [apply]
-    will not work if the left and right sides of the equality are
-    swapped. *)
+(** 要使用 [apply] 策略，被应用的事实（的结论）必须精确地匹配证明目标：
+    例如, 当等式的左右两边互换后，apply 就无法起效了。 *)
 
 Theorem silly3_firsttry : forall (n : nat),
      true = (n =? 5)  ->
@@ -88,9 +79,8 @@ Theorem silly3_firsttry : forall (n : nat),
 Proof.
   intros n H.
 
-(** Here we cannot use [apply] directly, but we can use the [symmetry]
-    tactic, which switches the left and right sides of an equality in
-    the goal. *)
+(** 在这里，我们无法直接使用 [apply]，不过我们可以用 [symmetry] 策略
+    它会交换证明目标中等式的左右两边。*)
 
   symmetry.
   simpl. (** (This [simpl] is optional, since [apply] will perform
@@ -107,7 +97,7 @@ Theorem rev_exercise1 : forall (l l' : list nat),
      l = rev l' ->
      l' = rev l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. rewrite H. symmetry. apply rev_involutive. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (apply_rewrite)  
@@ -123,8 +113,7 @@ Proof.
 (* ################################################################# *)
 (** * The [apply with] Tactic *)
 
-(** The following silly example uses two rewrites in a row to
-    get from [[a;b]] to [[e;f]]. *)
+(** 以下愚蠢的例子在一行中使用了两次改写来将 [a;b] 变成 [e;f]。 *)
 
 Example trans_eq_example : forall (a b c d e f : nat),
      [a;b] = [c;d] ->
@@ -134,9 +123,8 @@ Proof.
   intros a b c d e f eq1 eq2.
   rewrite -> eq1. rewrite -> eq2. reflexivity.  Qed.
 
-(** Since this is a common pattern, we might like to pull it out
-    as a lemma recording, once and for all, the fact that equality is
-    transitive. *)
+(** 由于这种模式十分常见，因此我们希望一劳永逸地把它作为一条引理记录下来，
+    即等式具有传递性。*)
 
 Theorem trans_eq : forall (X:Type) (n m o : X),
   n = m -> m = o -> n = o.
@@ -144,9 +132,8 @@ Proof.
   intros X n m o eq1 eq2. rewrite -> eq1. rewrite -> eq2.
   reflexivity.  Qed.
 
-(** Now, we should be able to use [trans_eq] to prove the above
-    example.  However, to do this we need a slight refinement of the
-    [apply] tactic. *)
+(** 现在，按理说我们应该可以用 [trans_eq] 来证明前面的例子了。
+    然而，为此我们还需要稍微改进一下 [apply] 策略 *)
 
 Example trans_eq_example' : forall (a b c d e f : nat),
      [a;b] = [c;d] ->
@@ -155,20 +142,15 @@ Example trans_eq_example' : forall (a b c d e f : nat),
 Proof.
   intros a b c d e f eq1 eq2.
 
-(** If we simply tell Coq [apply trans_eq] at this point, it can
-    tell (by matching the goal against the conclusion of the lemma)
-    that it should instantiate [X] with [[nat]], [n] with [[a,b]], and
-    [o] with [[e,f]].  However, the matching process doesn't determine
-    an instantiation for [m]: we have to supply one explicitly by
-    adding [with (m:=[c,d])] to the invocation of [apply]. *)
+(** 如果此时我们只是告诉 Coq [apply trans_eq]，那么它会 （根据该引理的结论对证明目标的匹配）
+    说 X 应当实例化为 [[nat]]、[n] 实例化为 [[a,b]]、以及 [o] 实例化为 [[e,f]]。然而，匹配过程并没有为
+    [m]确定实例：我们必须在 [apply] 的调用后面加上 [with (m:=[c,d])] 来显式地提供一个实例 *)
 
   apply trans_eq with (m:=[c;d]).
   apply eq1. apply eq2.   Qed.
 
-(** Actually, we usually don't have to include the name [m] in
-    the [with] clause; Coq is often smart enough to figure out which
-    instantiation we're giving. We could instead write: [apply
-    trans_eq with [c;d]]. *)
+(** 实际上，我们通常不必在 [with] 从句中包含名字 [m]，Coq 一般足够聪明来确定我们给出的实例。
+    我们也可以写成： [apply trans_eq with [c;d]]。*)
 
 (** **** Exercise: 3 stars, standard, optional (apply_with_exercise)  *)
 Example trans_eq_exercise : forall (n m o p : nat),
@@ -176,41 +158,35 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. symmetry in H0. rewrite H in H0. rewrite H0. reflexivity. Qed.
 (** [] *)
 
 (* ################################################################# *)
 (** * The [injection] and [discriminate] Tactics *)
 
-(** Recall the definition of natural numbers:
+(** 回想自然数的定义：
 
      Inductive nat : Type :=
        | O : nat
        | S : nat -> nat.
 
-    It is obvious from this definition that every number has one of
-    two forms: either it is the constructor [O] or it is built by
-    applying the constructor [S] to another number.  But there is more
-    here than meets the eye: implicit in the definition (and in our
-    informal understanding of how datatype declarations work in other
-    programming languages) are two more facts:
+    我们可从该定义中观察到，所有的数都是两种形式之一：要么是构造子 [O]， 要么就是
+    将构造子 [S] 应用到另一个数上。
 
-    - The constructor [S] is _injective_.  That is, if [S n = S m], it
-      must be the case that [n = m].
+    不过这里还有无法直接看到的： 自然数的定义（以及我们对其它编程语言中数据类型声明
+    的工作方式的非形式化理解）中还蕴含了两个事实:
 
-    - The constructors [O] and [S] are _disjoint_.  That is, [O] is not
-      equal to [S n] for any [n].
+    - 构造子 [S] 是单射（Injective）的。 如果 [S n = S m]，那么 [n = m] 必定成立。
 
-    Similar principles apply to all inductively defined types: all
-    constructors are injective, and the values built from distinct
-    constructors are never equal.  For lists, the [cons] constructor
-    is injective and [nil] is different from every non-empty list.
-    For booleans, [true] and [false] are different.  (Since neither
-    [true] nor [false] take any arguments, their injectivity is not
-    interesting.)  And so on. *)
+    - 构造子 [O] 和 [S] 是不相交（Disjoint）的。 对于任何 [n] ，[O] 都
+    不等于 [S n]。
 
-(** For example, we can prove the injectivity of [S] by using the
-    [pred] function defined in [Basics.v]. *)
+    类似的原理同样适用于所有归纳定义的类型：所有构造子都是单射的， 而不同构造子构造出
+    的值绝不可能相等。对于列表来说，[cons] 构造子是单射的， 而 [nil] 不同于任何
+    非空列表。对于布尔值来说，[true] 和 [false] 是不同的。 因为 true 和 false二者
+    都不接受任何参数，它们的单射性并不有趣。 其它归纳类型亦是如此 *)
+
+(** 例如，我们可以使用定义在 [Basics.v] 中的 [pred] 函数来证明 S 的单射性。*)
 
 Theorem S_injective : forall (n m : nat),
   S n = S m ->
@@ -221,13 +197,9 @@ Proof.
   rewrite H2. rewrite H1. reflexivity.
 Qed.
 
-(** This technique can be generalized to any constructor by
-    writing the equivalent of [pred] for that constructor -- i.e.,
-    writing a function that "undoes" one application of the
-    constructor. As a more convenient alternative, Coq provides a
-    tactic called [injection] that allows us to exploit the
-    injectivity of any constructor.  Here is an alternate proof of the
-    above theorem using [injection]: *)
+(** 这个技巧可以通过编写构造子的等价的 [pred] 来推广到任意的构造子上 —— 即编写一个
+    "撤销" 一次构造子调用的函数。 作为一种更加简便的替代品， Coq提供了叫做[injection]
+    的策略来让我们利用任意构造子的单射性。 此处是使用[injection]对上面定理的另一种证法。*)
 
 Theorem S_injective' : forall (n m : nat),
   S n = S m ->
@@ -235,17 +207,14 @@ Theorem S_injective' : forall (n m : nat),
 Proof.
   intros n m H.
 
-(** By writing [injection H] at this point, we are asking Coq to
-    generate all equations that it can infer from [H] using the
-    injectivity of constructors. Each such equation is added as a
-    premise to the goal. In the present example, adds the premise
-    [n = m]. *)
+(** 通过在此处编写 [injection H] ， 我们命令Coq使用构造子的单射性来产生所有它能从
+    [H]所推出的等式。 每一个产生的等式都作为一个前件附加在目标上。 
+    在这个例子中，附加了前件 [n = m] 。 *)
 
   injection H. intros Hnm. apply Hnm.
 Qed.
 
-(** Here's a more interesting example that shows how [injection] can
-    derive multiple equations at once. *)
+(** 此处展示了一个 injection 如何直接得出多个等式的有趣例子。*)
 
 Theorem injection_ex1 : forall (n m o : nat),
   [n; m] = [o; o] ->
@@ -256,8 +225,7 @@ Proof.
   rewrite H1. rewrite H2. reflexivity.
 Qed.
 
-(** The "[as]" variant of [injection] permits us to choose names for
-    the introduced equations rather than letting Coq do it. *)
+(** injection 的 "as" 变体允许我们而非Coq来为引入的等式选择名称。 *)
 
 Theorem injection_ex2 : forall (n m : nat),
   [n] = [m] ->
@@ -273,7 +241,8 @@ Example injection_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   y :: l = x :: j ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j H0 H1. injection H1. intros _ H2. 
+  symmetry. apply H2. Qed.
 (** [] *)
 
 (** So much for injectivity of constructors.  What about disjointness?
@@ -345,7 +314,7 @@ Example discriminate_ex3 :
     x :: y :: l = [] ->
     x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. discriminate H. Qed.
 (** [] *)
 
 (** The injectivity of constructors allows us to reason that
@@ -361,12 +330,11 @@ Proof. intros A B f x y eq. rewrite eq.  reflexivity.  Qed.
 (* ################################################################# *)
 (** * Using Tactics on Hypotheses *)
 
-(** By default, most tactics work on the goal formula and leave
-    the context unchanged.  However, most tactics also have a variant
-    that performs a similar operation on a statement in the context.
+(** 默认情况下，大部分策略会作用于目标公式并保持上下文不变。然而，
+    大部分策略还有对应的变体来对上下文中的语句执行类似的操作。
 
-    For example, the tactic [simpl in H] performs simplification in
-    the hypothesis named [H] in the context. *)
+    例如，策略 [simpl in H] 会对上下文中名为 [H] 的前提执行化简。
+ *)
 
 Theorem S_inj : forall (n m : nat) (b : bool),
      (S n) =? (S m) = b  ->
@@ -374,20 +342,17 @@ Theorem S_inj : forall (n m : nat) (b : bool),
 Proof.
   intros n m b H. simpl in H. apply H.  Qed.
 
-(** Similarly, [apply L in H] matches some conditional statement
-    [L] (of the form [X -> Y], say) against a hypothesis [H] in the
-    context.  However, unlike ordinary [apply] (which rewrites a goal
-    matching [Y] into a subgoal [X]), [apply L in H] matches [H]
-    against [X] and, if successful, replaces it with [Y].
+(** 类似地，[apply L in H] 会针对上下文中的前提 [H] 匹配某些
+    （形如 [X → Y] 中的）条件语句 [L]。然而，与一般的 [apply] 不同
+    （它将匹配 [Y] 的目标改写为子目标 [X]），[apply L in H] 会针对
+    [X] 匹配 [H]，如果成功，就将其替换为 [Y]。
 
-    In other words, [apply L in H] gives us a form of "forward
-    reasoning": from [X -> Y] and a hypothesis matching [X], it
-    produces a hypothesis matching [X].  By contrast, [apply L] is
-    "backward reasoning": it says that if we know [X -> Y] and we
-    are trying to prove [Y], it suffices to prove [X].
+    换言之，[apply L in H] 给了我们一种"正向推理"的方式：
+    根据 [X → Y] 和一个匹配 [X] 的前提，它会产生一个匹配 [Y] 的前提。
+    作为对比，[apply L] 是一种"反向推理"：它表示如果我们知道 [X → Y]
+    并且试图证明 [Y]， 那么证明 [X] 就足够了。
 
-    Here is a variant of a proof from above, using forward reasoning
-    throughout instead of backward reasoning. *)
+    下面是前面证明的一种变体，它始终使用正向推理而非反向推理 *)
 
 Theorem silly3' : forall (n : nat),
   (n =? 5 = true -> (S (S n)) =? 7 = true) ->
@@ -398,17 +363,13 @@ Proof.
   symmetry in H. apply eq in H. symmetry in H.
   apply H.  Qed.
 
-(** Forward reasoning starts from what is _given_ (premises,
-    previously proven theorems) and iteratively draws conclusions from
-    them until the goal is reached.  Backward reasoning starts from
-    the _goal_, and iteratively reasons about what would imply the
-    goal, until premises or previously proven theorems are reached.
+(** 正向推理从给定的东西开始（即前提、已证明的定理）， 根据它们迭代地
+    刻画结论直到抵达目标。反向推理从目标开始， 迭代地推理蕴含目标的东西，
+    直到抵达前提或已证明的定理。
 
-    If you've seen informal proofs before (for example, in a math or
-    computer science class), they probably used forward reasoning.  In
-    general, idiomatic use of Coq tends to favor backward reasoning,
-    but in some situations the forward style can be easier to think
-    about.  *)
+    如果你之前见过非形式化的证明（例如在数学或计算机科学课上）， 它们使用的
+    应该是正向推理。通常，Coq 习惯上倾向于使用反向推理， 但在某些情况下，
+    正向推理更易于思考。*)
 
 (** **** Exercise: 3 stars, standard, recommended (plus_n_n_injective)  
 
@@ -420,32 +381,35 @@ Theorem plus_n_n_injective : forall n m,
      n = m.
 Proof.
   intros n. induction n as [| n'].
-  (* FILL IN HERE *) Admitted.
+  (* Use [plus_n_Sm] Lemma *)
+  - intros m H. simpl in H. destruct m as [| m'].
+    + reflexivity.
+    + simpl in H. discriminate H.
+  - intros m H. simpl in H. destruct m as [| m'].
+    + discriminate H.
+    + simpl in H. rewrite <- !plus_n_Sm in H. (* rewrite modifiers *)
+      inversion H. apply IHn' in H1. rewrite H1. reflexivity. Qed.
 (** [] *)
 
 (* ################################################################# *)
 (** * Varying the Induction Hypothesis *)
 
-(** Sometimes it is important to control the exact form of the
-    induction hypothesis when carrying out inductive proofs in Coq.
-    In particular, we need to be careful about which of the
-    assumptions we move (using [intros]) from the goal to the context
-    before invoking the [induction] tactic.  For example, suppose
-    we want to show that [double] is injective -- i.e., that it maps
-    different arguments to different results:
+(** 在 Coq 中进行归纳证明时，有时控制归纳假设的确切形式是十分重要的。 特别是在
+    调用 [induction] 策略前，我们用 [intros] 将假设从目标移到上下文中时要十分小心。
+    例如，假设我们要证明 [double] 函数式单射 — 即它将不同的参数映射到不同的结果：
 
        Theorem double_injective: forall n m,
          double n = double m -> n = m.
 
-    The way we _start_ this proof is a bit delicate: if we begin with
+    其证明的开始方式有点微妙：如果我们以
 
        intros n. induction n.
 
-    all is well.  But if we begin it with
+    开始，那么一切都好。然而假如以
 
        intros n m. induction n.
 
-    we get stuck in the middle of the inductive case... *)
+    开始，就会卡在归纳情况中...*)
 
 Theorem double_injective_FAILED : forall n m,
      double n = double m ->
@@ -459,27 +423,24 @@ Proof.
     + (* m = O *) discriminate eq.
     + (* m = S m' *) apply f_equal.
 
-(** At this point, the induction hypothesis, [IHn'], does _not_ give us
-    [n' = m'] -- there is an extra [S] in the way -- so the goal is
-    not provable. *)
+(** 此时，归纳假设 [IHn'] 不会给出 [n' = m'] — 会有个额外的 [S] 阻碍
+    因此该目标无法证明。*)
 
       Abort.
 
 (** What went wrong? *)
 
-(** The problem is that, at the point we invoke the induction
-    hypothesis, we have already introduced [m] into the context --
-    intuitively, we have told Coq, "Let's consider some particular [n]
-    and [m]..." and we now have to prove that, if [double n = double
-    m] for _these particular_ [n] and [m], then [n = m].
+(** 问题在于，我们在调用归纳假设的地方已经将 [m] 引入了上下文中
+    直观上，我们已经告诉了 Coq "我们来考虑具体的 [n] 和 [m]..."，
+    而现在必须为这些具体的 n 和 m 证明 [double n = double m]，
+    然后才有 [n = m]。
 
-    The next tactic, [induction n] says to Coq: We are going to show
-    the goal by induction on [n].  That is, we are going to prove, for
-    _all_ [n], that the proposition
+    下一个策略 [induction n] 告诉 Coq：我们要对 [n] 归纳来证明该目标。
+    也就是说，我们要证明对于所有的 [n]，命题
 
       - [P n] = "if [double n = double m], then [n = m]"
 
-    holds, by showing
+    成立，需通过证明
 
       - [P O]
 
@@ -490,33 +451,30 @@ Proof.
         (i.e., "if [double n = double m] then [n = m]" implies "if
         [double (S n) = double m] then [S n = m]").
 
-    If we look closely at the second statement, it is saying something
-    rather strange: it says that, for a _particular_ [m], if we know
+    如果我们仔细观察第二个语句，就会发现它说了奇怪的事情：
+    即，对于一个具体的 [m]，如果我们知道
 
       - "if [double n = double m] then [n = m]"
 
-    then we can prove
+    那么我们就能证明
 
        - "if [double (S n) = double m] then [S n = m]".
 
-    To see why this is strange, let's think of a particular [m] --
-    say, [5].  The statement is then saying that, if we know
+    要理解为什么它很奇怪，我们来考虑一个具体的 [m] — 比如说5。
+    该语句就会这样说：如果我们知道
 
       - [Q] = "if [double n = 10] then [n = 5]"
 
-    then we can prove
+    那么我们就能证明
 
       - [R] = "if [double (S n) = 10] then [S n = 5]".
 
-    But knowing [Q] doesn't give us any help at all with proving
-    [R]!  (If we tried to prove [R] from [Q], we would start with
-    something like "Suppose [double (S n) = 10]..." but then we'd be
-    stuck: knowing that [double (S n)] is [10] tells us nothing about
-    whether [double n] is [10], so [Q] is useless.) *)
+    但是知道 [Q] 对于证明 [R] 来说并没有任何帮助！（如果我们试着根据 [Q] 证明
+    [R] from [Q]，就会以"假设 double (S n) = 10.."这样的句子开始， 不过之后
+    我们就会卡住：知道 [double (S n)] 为 10 并不能告诉我们 [double n] 是否为 10，
+    因此 [Q] 是没有用的。）*)
 
-(** Trying to carry out this proof by induction on [n] when [m] is
-    already in the context doesn't work because we are then trying to
-    prove a statement involving _every_ [n] but just a _single_ [m]. *)
+(** 当 [m] 已经在上下文中时，试图对 [n] 进行归纳来进行此证明是行不通的， 因为我们之后要尝试证明涉及每一个 n 的命题，而不只是单个 m。 *)
 
 (** The successful proof of [double_injective] leaves [m] in the goal
     statement at the point where the [induction] tactic is invoked on
