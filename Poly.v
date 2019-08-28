@@ -477,11 +477,10 @@ Proof. reflexivity. Qed.
 (* ================================================================= *)
 (** ** Polymorphic Options *)
 
-(** One last polymorphic type for now: _polymorphic options_,
-    which generalize [natoption] from the previous chapter.  (We put
-    the definition inside a module because the standard library
-    already defines [option] and it's this one that we want to use
-    below.) *)
+(** 现在介绍最后一种多态类型：多态候选（Polymorphic Options）, 它推广了上一章中的
+    [natoption]. (We put the definition inside a module because the 
+    standard library already defines [option] and it's this one that
+    we want to use below.) *)
 
 Module OptionPlayground.
 
@@ -494,8 +493,7 @@ Arguments None {X}.
 
 End OptionPlayground.
 
-(** We can now rewrite the [nth_error] function so that it works
-    with any type of lists. *)
+(** 现在我们可以重写 [nth_error] 函数来让它适用于任何类型的列表了。*)
 
 Fixpoint nth_error {X : Type} (l : list X) (n : nat)
                    : option X :=
@@ -517,8 +515,11 @@ Proof. reflexivity. Qed.
     [hd_error] function from the last chapter. Be sure that it
     passes the unit tests below. *)
 
-Definition hd_error {X : Type} (l : list X) : option X
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition hd_error {X : Type} (l : list X) : option X :=
+  match l with
+    | nil    => None
+    | h :: _ => Some h
+end.
 
 (** Once again, to force the implicit arguments to be explicit,
     we can use [@] before the name of the function. *)
@@ -526,32 +527,28 @@ Definition hd_error {X : Type} (l : list X) : option X
 Check @hd_error.
 
 Example test_hd_error1 : hd_error [1;2] = Some 1.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_hd_error2 : hd_error  [[1];[2]]  = Some [1].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (* ################################################################# *)
 (** * Functions as Data *)
 
-(** Like many other modern programming languages -- including
-    all functional languages (ML, Haskell, Scheme, Scala, Clojure,
-    etc.) -- Coq treats functions as first-class citizens, allowing
-    them to be passed as arguments to other functions, returned as
-    results, stored in data structures, etc. *)
+(** 和其它现代编程语言，包括所有函数式语言（ML、Haskell、 Scheme、Scala、Clojure 等）
+    一样，Coq 也将函数视作“一等公民（First-Class Citizens）”， 即允许将它们作为参数
+    传入其它函数、作为结果返回、以及存储在数据结构中等等。*)
 
 (* ================================================================= *)
 (** ** Higher-Order Functions *)
 
-(** Functions that manipulate other functions are often called
-    _higher-order_ functions.  Here's a simple one: *)
+(** F用于操作其它函数的函数通常叫做_高阶函数_。以下是简单的示例：*)
 
 Definition doit3times {X:Type} (f:X->X) (n:X) : X :=
   f (f (f n)).
 
-(** The argument [f] here is itself a function (from [X] to
-    [X]); the body of [doit3times] applies [f] three times to some
-    value [n]. *)
+(** 这里的参数 [f] 本身也是个（从 [X] 到 [X] 的）函数， [doit3times] 的函数体
+    将 [f] 对某个值 [n] 应用三次。*)
 
 Check @doit3times.
 (* ===> doit3times : forall X : Type, (X -> X) -> X -> X *)
@@ -565,10 +562,9 @@ Proof. reflexivity.  Qed.
 (* ================================================================= *)
 (** ** Filter *)
 
-(** Here is a more useful higher-order function, taking a list
-    of [X]s and a _predicate_ on [X] (a function from [X] to [bool])
-    and "filtering" the list, returning a new list containing just
-    those elements for which the predicate returns [true]. *)
+(** 下面是个更有用的高阶函数，它接受一个元素类型为 [X] 的列表和一个 [X] 的谓词
+   （即一个从 [X] 到 [bool] 的函数），然后"过滤"此列表并返回一个新列表， 其中
+   仅包含对该谓词返回 [true] 的元素。*)
 
 Fixpoint filter {X:Type} (test: X->bool) (l:list X)
                 : (list X) :=
@@ -578,9 +574,8 @@ Fixpoint filter {X:Type} (test: X->bool) (l:list X)
                         else       filter test t
   end.
 
-(** For example, if we apply [filter] to the predicate [evenb]
-    and a list of numbers [l], it returns a list containing just the
-    even members of [l]. *)
+(** 例如，如果我们将 [filter] 应用到 predicate [evenb] 和
+    一个数值列表 [l] 上，那么它就会返回一个只包含 [l] 中偶数的列表。*)
 
 Example test_filter1: filter evenb [1;2;3;4] = [2;4].
 Proof. reflexivity.  Qed.
@@ -594,44 +589,33 @@ Example test_filter2:
   = [ [3]; [4]; [8] ].
 Proof. reflexivity.  Qed.
 
-(** We can use [filter] to give a concise version of the
-    [countoddmembers] function from the [Lists] chapter. *)
+(** 我们可以使用 [filter] 给出 [Lists] 章节中 [countoddmembers] 函数的简洁的版本。*)
 
 Definition countoddmembers' (l:list nat) : nat :=
   length (filter oddb l).
 
-Example test_countoddmembers'1:   countoddmembers' [1;0;3;1;4;5] = 4.
+Example test_countoddmembers'1:countoddmembers' [1;0;3;1;4;5] = 4.
 Proof. reflexivity.  Qed.
-Example test_countoddmembers'2:   countoddmembers' [0;2;4] = 0.
+Example test_countoddmembers'2:countoddmembers' [0;2;4] = 0.
 Proof. reflexivity.  Qed.
-Example test_countoddmembers'3:   countoddmembers' nil = 0.
+Example test_countoddmembers'3:countoddmembers' nil = 0.
 Proof. reflexivity.  Qed.
 
 (* ================================================================= *)
 (** ** Anonymous Functions *)
 
-(** It is arguably a little sad, in the example just above, to
-    be forced to define the function [length_is_1] and give it a name
-    just to be able to pass it as an argument to [filter], since we
-    will probably never use it again.  Moreover, this is not an
-    isolated example: when using higher-order functions, we often want
-    to pass as arguments "one-off" functions that we will never use
-    again; having to give each of these functions a name would be
-    tedious.
-
-    Fortunately, there is a better way.  We can construct a function
-    "on the fly" without declaring it at the top level or giving it a
-    name. *)
+(** 在上面这个例子中，我们不得不定义一个名为 [length_is_1] 的函数， 以便让它能够
+    作为参数传入到 [filter] 中，由于该函数可能再也用不到了， 这有点令人沮丧。
+    我们经常需要传入"一次性"的函数作为参数，之后不会再用， 而为每个函数取名是十分无聊的。
+    幸运的是，有一种更好的方法。我们可以按需随时构造函数而不必在顶层中声明它或给它取名 *)
 
 Example test_anon_fun':
   doit3times (fun n => n * n) 2 = 256.
 Proof. reflexivity.  Qed.
 
-(** The expression [(fun n => n * n)] can be read as "the function
-    that, given a number [n], yields [n * n]." *)
+(** 表达式 [(fun n => n * n)] 可读作"一个给定 [n] 并返回 [n * n] 的函数。" *)
 
-(** Here is the [filter] example, rewritten to use an anonymous
-    function. *)
+(** 以下为使用匿名函数重写的 [filter] 示例：*)
 
 Example test_filter2':
     filter (fun l => (length l) =? 1)
@@ -639,23 +623,23 @@ Example test_filter2':
   = [ [3]; [4]; [8] ].
 Proof. reflexivity.  Qed.
 
-(** **** Exercise: 2 stars, standard (filter_even_gt7)  
+(** **** Exercise: 2 stars, standard (filter_even_gt7)
 
     Use [filter] (instead of [Fixpoint]) to write a Coq function
     [filter_even_gt7] that takes a list of natural numbers as input
     and returns a list of just those that are even and greater than
     7. *)
 
-Definition filter_even_gt7 (l : list nat) : list nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition filter_even_gt7 (l : list nat) : list nat :=
+  filter (fun n => (evenb n) && (leb 7 n)) l.
 
 Example test_filter_even_gt7_1 :
   filter_even_gt7 [1;2;6;9;10;3;12;8] = [10;12;8].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_filter_even_gt7_2 :
   filter_even_gt7 [5;2;6;19;129] = [].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (partition)  
@@ -676,19 +660,19 @@ Example test_filter_even_gt7_2 :
 Definition partition {X : Type}
                      (test : X -> bool)
                      (l : list X)
-                   : list X * list X
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+                   : list X * list X :=
+  (filter test l, filter (fun n => negb (test n)) l).
 
 Example test_partition1: partition oddb [1;2;3;4;5] = ([1;3;5], [2;4]).
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 Example test_partition2: partition (fun x => false) [5;9;0] = ([], [5;9;0]).
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
 (** ** Map *)
 
-(** Another handy higher-order function is called [map]. *)
+(** 另一个方便的高阶函数叫做 [map]. *)
 
 Fixpoint map {X Y: Type} (f:X->Y) (l:list X) : (list Y) :=
   match l with
@@ -696,25 +680,21 @@ Fixpoint map {X Y: Type} (f:X->Y) (l:list X) : (list Y) :=
   | h :: t => (f h) :: (map f t)
   end.
 
-(** It takes a function [f] and a list [ l = [n1, n2, n3, ...] ]
-    and returns the list [ [f n1, f n2, f n3,...] ], where [f] has
-    been applied to each element of [l] in turn.  For example: *)
+(** 它接受一个函数 [f] 和一个列表 [l = [n1, n2, n3, ...]] 并返回列表
+    [[f n1, f n2, f n3,...]] ，其中 [f] 可分别应用于 [l] 中的每一个元素。例如： *)
 
 Example test_map1: map (fun x => plus 3 x) [2;0;2] = [5;3;5].
 Proof. reflexivity.  Qed.
 
-(** The element types of the input and output lists need not be
-    the same, since [map] takes _two_ type arguments, [X] and [Y]; it
-    can thus be applied to a list of numbers and a function from
-    numbers to booleans to yield a list of booleans: *)
+(** 输入列表和输出列表的元素类型不必相同，因为 [map] 会接受_两个_类型参数 [X] 和 [Y]，
+    因此它可以应用到一个数值的列表和一个从数值到布尔值的函数， 并产生一个布尔值列表：*)
 
 Example test_map2:
   map oddb [2;1;2;5] = [false;true;false;true].
 Proof. reflexivity.  Qed.
 
-(** It can even be applied to a list of numbers and
-    a function from numbers to _lists_ of booleans to
-    yield a _list of lists_ of booleans: *)
+(** 它甚至可以应用到一个数值的列表和一个从数值到布尔值列表的函数， 
+    并产生一个布尔值的_列表的列表_： *)
 
 Example test_map3:
     map (fun n => [evenb n;oddb n]) [2;1;2;5]
@@ -729,10 +709,47 @@ Proof. reflexivity.  Qed.
     Show that [map] and [rev] commute.  You may need to define an
     auxiliary lemma. *)
 
+Lemma app_map : forall (X Y : Type) (f : X -> Y) (l : list X) (x : X),
+  app (map f l) [f x] = map f (app l [x]).
+Proof.
+  intros.
+  induction l.
+  - reflexivity.
+  - simpl. rewrite -> IHl. reflexivity.
+Qed.
+
 Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l : list X),
   map f (rev l) = rev (map f l).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y f l.
+  induction l as [|x l'].
+  - (* l = nil *)
+    reflexivity.
+  - (* l = n :: l' *)
+    simpl. rewrite <- IHl'. simpl.
+    rewrite -> app_map. reflexivity.
+Qed.
+
+Lemma map_app : forall (X Y : Type) (f : X -> Y) (l1 l2 : list X),
+  map f (l1 ++ l2) = map f l1 ++ (map f l2).
+Proof.
+  intros.
+  induction l1 as [| h1 t1 IH1].
+  - reflexivity.
+  - simpl. rewrite -> IH1. reflexivity.
+Qed.
+
+Theorem map_rev' : forall (X Y : Type) (f : X -> Y) (l : list X),
+  map f (rev l) = rev (map f l).
+Proof.
+  intros.
+  induction l as [| h t IH].
+  - reflexivity.
+  - simpl. rewrite -> map_app.
+    simpl. rewrite -> IH.
+    reflexivity.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, recommended (flat_map)  
@@ -748,13 +765,16 @@ Proof.
 *)
 
 Fixpoint flat_map {X Y: Type} (f: X -> list Y) (l: list X)
-                   : (list Y)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+                   : (list Y) :=
+  match l with
+    | [] => []
+    | h :: t => (f h) ++ (flat_map f t)
+  end.
 
 Example test_flat_map1:
   flat_map (fun n => [n;n;n]) [1;5;4]
   = [1; 1; 1; 5; 5; 5; 4; 4; 4].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** Lists are not the only inductive type for which [map] makes sense.
@@ -782,10 +802,8 @@ Definition option_map {X Y : Type} (f : X -> Y) (xo : option X)
 (* ================================================================= *)
 (** ** Fold *)
 
-(** An even more powerful higher-order function is called
-    [fold].  This function is the inspiration for the "[reduce]"
-    operation that lies at the heart of Google's map/reduce
-    distributed programming framework. *)
+(** 一个更加强大的高阶函数叫做 [fold]。本函数启发自"reduce"归约操作，
+    它是 Google 的 map/reduce 分布式编程框架的核心。*)
 
 Fixpoint fold {X Y: Type} (f: X->Y->Y) (l: list X) (b: Y)
                          : Y :=
@@ -794,20 +812,17 @@ Fixpoint fold {X Y: Type} (f: X->Y->Y) (l: list X) (b: Y)
   | h :: t => f h (fold f t b)
   end.
 
-(** Intuitively, the behavior of the [fold] operation is to
-    insert a given binary operator [f] between every pair of elements
-    in a given list.  For example, [ fold plus [1;2;3;4] ] intuitively
-    means [1+2+3+4].  To make this precise, we also need a "starting
-    element" that serves as the initial second input to [f].  So, for
-    example,
+(** 直观上来说，[fold] 操作的行为就是将给定的二元操作符 [f] 插入到给定列表的每一对元素之间。
+    例如， [fold plus [1;2;3;4]] 直观上的意思是 [1+2+3+4]。为了让它更精确，我们还需要一个
+    "起始元素" 作为 f 初始的第二个输入。因此，例如
 
        fold plus [1;2;3;4] 0
 
-    yields
+    就会产生
 
        1 + (2 + (3 + (4 + 0))).
 
-    Some more examples: *)
+    更多例子: *)
 
 Check (fold andb).
 (* ===> fold andb : list bool -> bool -> bool *)
@@ -822,7 +837,7 @@ Proof. reflexivity. Qed.
 
 Example fold_example3 :
   fold app  [[1];[];[2;3];[4]] [] = [1;2;3;4].
-Proof. reflexivity. Qed.
+Proof. reflexivity. Qed. 
 
 (** **** Exercise: 1 star, advanced (fold_types_different)  
 
@@ -831,8 +846,9 @@ Proof. reflexivity. Qed.
     that takes an [X] and a [Y] and returns a [Y].  Can you think of a
     situation where it would be useful for [X] and [Y] to be
     different? *)
-
-(* FILL IN HERE *)
+    
+Definition flat_map' {X : Type} (l : list (list X)) : list X
+  := fold app l [].
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_fold_types_different : option (nat*string) := None.
@@ -841,12 +857,9 @@ Definition manual_grade_for_fold_types_different : option (nat*string) := None.
 (* ================================================================= *)
 (** ** Functions That Construct Functions *)
 
-(** Most of the higher-order functions we have talked about so
-    far take functions as arguments.  Let's look at some examples that
-    involve _returning_ functions as the results of other functions.
-    To begin, here is a function that takes a value [x] (drawn from
-    some type [X]) and returns a function from [nat] to [X] that
-    yields [x] whenever it is called, ignoring its [nat] argument. *)
+(** 目前我们讨论过的大部分高阶函数都是接受函数作为参数的。 现在我们来看一些将函数
+    作为其它函数的_结果_返回的例子。 首先，下面是一个接受值 [x]（由某个类型 [X] 刻画）
+    并返回一个从 [nat] 到 [X] 的函数，当它被调用时总是产生 [x] 并忽略其 [nat] 参数。*)
 
 Definition constfun {X: Type} (x: X) : nat->X :=
   fun (k:nat) => x.
@@ -859,22 +872,17 @@ Proof. reflexivity. Qed.
 Example constfun_example2 : (constfun 5) 99 = 5.
 Proof. reflexivity. Qed.
 
-(** In fact, the multiple-argument functions we have already
-    seen are also examples of passing functions as data.  To see why,
-    recall the type of [plus]. *)
+(** 实际上，我们已经见过的多参函数也是讲函数作为数据传入的例子。 
+    为了理解为什么，请回想 [plus] 的类型。*)
 
 Check plus.
 (* ==> nat -> nat -> nat *)
 
-(** Each [->] in this expression is actually a _binary_ operator
-    on types.  This operator is _right-associative_, so the type of
-    [plus] is really a shorthand for [nat -> (nat -> nat)] -- i.e., it
-    can be read as saying that "[plus] is a one-argument function that
-    takes a [nat] and returns a one-argument function that takes
-    another [nat] and returns a [nat]."  In the examples above, we
-    have always applied [plus] to both of its arguments at once, but
-    if we like we can supply just the first.  This is called _partial
-    application_. *)
+(** 该表达式中的每个 [->] 实际上都是一个类型上的二元操作符。 该操作符是_右结合_的，
+    因此 [plus] 的类型其实是 [nat -> (nat -> nat)] 的简写，即，它可以读作
+    "[plus] 是一个单参数函数，它接受一个 [nat] 并返回另一个函数，该函数接受另一个
+    [nat] 并返回一个[nat]"。 在上面的例子中，我们总是将 [plus]一次同时应用到两个参数上
+    不过如果我们喜欢，也可以一次只提供一个参数，这叫做_偏应用_（Partial Application）*)
 
 Definition plus3 := plus 3.
 Check plus3.
@@ -911,7 +919,10 @@ Proof. reflexivity. Qed.
 Theorem fold_length_correct : forall X (l : list X),
   fold_length l = length l.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros.
+  induction l as [| x l' IHl'].
+  - reflexivity.
+  - simpl. rewrite <- IHl'. simpl. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (fold_map)  
@@ -919,15 +930,20 @@ Proof.
     We can also define [map] in terms of [fold].  Finish [fold_map]
     below. *)
 
-Definition fold_map {X Y: Type} (f: X -> Y) (l: list X) : list Y
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
-
+Definition fold_map {X Y: Type} (f: X -> Y) (l: list X) : list Y :=
+  fold (fun x l => cons (f x) l) l [].
 (** Write down a theorem [fold_map_correct] in Coq stating that
    [fold_map] is correct, and prove it.  (Hint: again, remember that
    [reflexivity] simplifies expressions a bit more aggressively than
    [simpl].) *)
 
-(* FILL IN HERE *)
+Theorem fold_map_correct : forall (X Y : Type) (f : X -> Y) (l : list X),
+  map f l = fold_map f l.
+Proof.
+  intros X Y f l.
+  induction l as [|x l'].
+  - reflexivity.
+  - simpl. rewrite -> IHl'. simpl. reflexivity. Qed.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_fold_map : option (nat*string) := None.
@@ -1126,4 +1142,4 @@ End Church.
 End Exercises.
 
 
-(* Wed Jan 9 12:02:44 EST 2019 *)
+(* Wed Aug 28 12:47 EST 2019 *)
