@@ -10,55 +10,37 @@ From LF Require Export Lists.
 (* ################################################################# *)
 (** * Polymorphism *)
 
-(** In this chapter we continue our development of basic
-    concepts of functional programming.  The critical new ideas are
-    _polymorphism_ (abstracting functions over the types of the data
-    they manipulate) and _higher-order functions_ (treating functions
-    as data).  We begin with polymorphism. *)
+(** 在本章中，我们会继续发展函数式编程的基本概念，其中最关键的新概念就是 多态
+   （在所处理的数据类型上抽象出函数）和高阶函数（函数作为数据）。 *)
 
 (* ================================================================= *)
 (** ** Polymorphic Lists *)
 
-(** For the last couple of chapters, we've been working just
-    with lists of numbers.  Obviously, interesting programs also need
-    to be able to manipulate lists with elements from other types --
-    lists of strings, lists of booleans, lists of lists, etc.  We
-    _could_ just define a new inductive datatype for each of these,
-    for example... *)
+(** 在前几章中，我们只是使用了数的列表。很明显，有趣的程序还需要能够处理其它元素类型的列表，
+    如字符串列表、布尔值列表、 列表的列表等等。我们可以分别为它们定义新的归纳数据类型，例如...*)
 
 Inductive boollist : Type :=
   | bool_nil
   | bool_cons (b : bool) (l : boollist).
 
-(** ... but this would quickly become tedious, partly because we
-    have to make up different constructor names for each datatype, but
-    mostly because we would also need to define new versions of all
-    our list manipulating functions ([length], [rev], etc.) for each
-    new datatype definition. *)
+(** ...不过这样很快就会变得乏味。 部分原因在于我们必须为每种数据类型都定义不同的构造子， 
+    然而主因还是我们必须为每种数据类型再重新定义一遍所有的列表处理函数 （如 length、rev 等）。*)
 
-(** To avoid all this repetition, Coq supports _polymorphic_
-    inductive type definitions.  For example, here is a _polymorphic
-    list_ datatype. *)
+(** 为避免这些重复，Coq 支持定义多态归纳类型。 例如，以下就是多态列表数据类型。 *)
 
 Inductive list (X:Type) : Type :=
   | nil
   | cons (x : X) (l : list X).
 
-(** This is exactly like the definition of [natlist] from the
-    previous chapter, except that the [nat] argument to the [cons]
-    constructor has been replaced by an arbitrary type [X], a binding
-    for [X] has been added to the header, and the occurrences of
-    [natlist] in the types of the constructors have been replaced by
-    [list X].  (We can re-use the constructor names [nil] and [cons]
-    because the earlier definition of [natlist] was inside of a
-    [Module] definition that is now out of scope.)
+(** 这和上一章中 [natlist] 的定义基本一样，只是将 [cons] 构造子的 [nat] 参数换成了任意的类型
+     [X]，定义的头部添加了 [X] 的绑定， 而构造子类型中的 [natlist] 则换成了 [list X]。（我们
+     可以重用构造子名 [nil] 和 [cons]，因为之前定义的 [natlist] 在当前作用之外的一个
+      [Module] 中。）
 
-    What sort of thing is [list] itself?  One good way to think
-    about it is that [list] is a _function_ from [Type]s to
-    [Inductive] definitions; or, to put it another way, [list] is a
-    function from [Type]s to [Type]s.  For any particular type [X],
-    the type [list X] is an [Inductive]ly defined set of lists whose
-    elements are of type [X]. *)
+      [list] 本身又是什么类型？一种不错的思路就是把 [list] 当做从 [Type] 类型到 [Inductive] 
+      归纳定义的函数；或者换种思路，即 [list] 是个从 [Type] 类型到 [Type] 类型的函数。对于任何
+      特定的类型 [X]， 类型 [list X] 是一个 [Inductive] 归纳定义的，元素类型为 [X] 的列表的
+      集合。 *)
 
 Check list.
 (* ===> list : Type -> Type *)
@@ -73,51 +55,37 @@ Check list.
 Check (nil nat).
 (* ===> nil nat : list nat *)
 
-(** Similarly, [cons nat] adds an element of type [nat] to a list of
-    type [list nat]. Here is an example of forming a list containing
-    just the natural number 3. *)
+(** [cons nat] 与此类似，它将类型为 [nat] 的元素添加到类型为 [list nat] 的列表中。
+    以下示例构造了一个只包含自然数 3 的列表： *)
 
 Check (cons nat 3 (nil nat)).
 (* ===> cons nat 3 (nil nat) : list nat *)
 
-(** What might the type of [nil] be? We can read off the type [list X]
-    from the definition, but this omits the binding for [X] which is
-    the parameter to [list]. [Type -> list X] does not explain the
-    meaning of [X]. [(X : Type) -> list X] comes closer. Coq's
-    notation for this situation is [forall X : Type, list X]. *)
+(** [nil] 的类型可能是什么？我们可以从定义中看到 [list X] 的类型， 它忽略了 [list] 的
+    形参 [X] 的绑定。[Type → list X] 并没有解释 [X] 的含义，[(X : Type) → list X] 则
+    比较接近。Coq 对这种情况的记法为 [forall X : Type, list X]. *)
 
 Check nil.
 (* ===> nil : forall X : Type, list X *)
 
-(** Similarly, the type of [cons] from the definition looks like
-    [X -> list X -> list X], but using this convention to explain the
-    meaning of [X] results in the type [forall X, X -> list X -> list
-    X]. *)
+(** 类似地，定义中 [cons] 看起来像 [X → list X → list X] 然而以此约定来解释
+    [X] 的含义则是类型 [forall X, X → list X → list X]. *)
 
 Check cons.
 (* ===> cons : forall X : Type, X -> list X -> list X *)
 
-(** (Side note on notation: In .v files, the "forall" quantifier
-    is spelled out in letters.  In the generated HTML files and in the
-    way various IDEs show .v files (with certain settings of their
-    display controls), [forall] is usually typeset as the usual
-    mathematical "upside down A," but you'll still see the spelled-out
-    "forall" in a few places.  This is just a quirk of typesetting:
-    there is no difference in meaning.) *)
+(** （关于记法的附注：在 .v 文件中，量词 "forall" 会写成字母的形式， 而在生成的
+     HTML 和一些设置了显示控制的 IDE 中，[forall] 通常会渲染成一般的 "∀" 数学符号，
+     虽然你偶尔还是会看到英文拼写的 "forall"。这只是排版上的效果，它们的含义没有任何区别。）*)
 
-(** Having to supply a type argument for each use of a list
-    constructor may seem an awkward burden, but we will soon see
-    ways of reducing that burden. *)
+(** 如果在每次使用列表构造子时，都要为它提供类型参数，那样会很麻烦。 不过我们很快
+    就会看到如何省去这种麻烦。 *)
 
 Check (cons nat 2 (cons nat 1 (nil nat))).
 
-(** (We've written [nil] and [cons] explicitly here because we haven't
-    yet defined the [ [] ] and [::] notations for the new version of
-    lists.  We'll do that in a bit.) *)
-
-(** We can now go back and make polymorphic versions of all the
-    list-processing functions that we wrote before.  Here is [repeat],
-    for example: *)
+(** （这里显式地写出了 [nil] 和 [cons]，因为我们还没为新版本的列表定义 [[]] 和 [::] 记法。
+      我们待会儿再干。)
+      现在我们可以回过头来定义之前写下的列表处理函数的多态版本了。 例如 [repeat]： *)
 
 Fixpoint repeat (X : Type) (x : X) (count : nat) : list X :=
   match count with
@@ -125,15 +93,14 @@ Fixpoint repeat (X : Type) (x : X) (count : nat) : list X :=
   | S count' => cons X x (repeat X x count')
   end.
 
-(** As with [nil] and [cons], we can use [repeat] by applying it
-    first to a type and then to an element of this type (and a number): *)
+(** 同 [nil] 与 [cons] 一样，我们可以通过将 [repeat] 应用到一个类型、
+    一个该类型的元素以及一个数字来使用它：*)
 
 Example test_repeat1 :
   repeat nat 4 2 = cons nat 4 (cons nat 4 (nil nat)).
 Proof. reflexivity.  Qed.
 
-(** To use [repeat] to build other kinds of lists, we simply
-    instantiate it with an appropriate type parameter: *)
+(** 要用 [repeat] 构造其它种类的列表， 我们只需通过对应类型的参数将它实例化即可：*)
 
 Example test_repeat2 :
   repeat bool false 1 = cons bool false (nil bool).
@@ -157,14 +124,18 @@ Inductive grumble (X:Type) : Type :=
 
 (** Which of the following are well-typed elements of [grumble X] for
     some type [X]?  (Add YES or NO to each line.)
-      - [d (b a 5)]
-      - [d mumble (b a 5)]
-      - [d bool (b a 5)]
-      - [e bool true]
-      - [e mumble (b c 0)]
-      - [e bool (b c 0)]
-      - [c]  *)
+      - [d (b a 5)] "NO"
+      - [d mumble (b a 5)] "YES"
+      - [d bool (b a 5)] "YES"
+      - [e bool true] "YES"
+      - [e mumble (b c 0)] "NO"
+      - [e bool (b c 0)] "NO"
+      - [c] "YES" *)
 (* FILL IN HERE *)
+Eval compute in d mumble (b a 5).
+Eval compute in d bool (b a 5).
+Eval compute in e bool true.
+Eval compute in c.
 End MumbleGrumble.
 
 (* Do not modify the following line: *)
@@ -174,9 +145,7 @@ Definition manual_grade_for_mumble_grumble : option (nat*string) := None.
 (* ----------------------------------------------------------------- *)
 (** *** Type Annotation Inference *)
 
-(** Let's write the definition of [repeat] again, but this time we
-    won't specify the types of any of the arguments.  Will Coq still
-    accept it? *)
+(** 我们再写一遍 [repeat] 的定义，不过这次不指定任何参数的类型。 Coq 还会接受它么？ *)
 
 Fixpoint repeat' X x count : list X :=
   match count with
@@ -184,39 +153,29 @@ Fixpoint repeat' X x count : list X :=
   | S count' => cons X x (repeat' X x count')
   end.
 
-(** Indeed it will.  Let's see what type Coq has assigned to [repeat']: *)
+(** I当然会。我们来看看 Coq 赋予了 [repeat'] 什么类型： *)
 
 Check repeat'.
 (* ===> forall X : Type, X -> nat -> list X *)
 Check repeat.
 (* ===> forall X : Type, X -> nat -> list X *)
 
-(** It has exactly the same type as [repeat].  Coq was able
-    to use _type inference_ to deduce what the types of [X], [x], and
-    [count] must be, based on how they are used.  For example, since
-    [X] is used as an argument to [cons], it must be a [Type], since
-    [cons] expects a [Type] as its first argument; matching [count]
-    with [0] and [S] means it must be a [nat]; and so on.
+(** 它与 [repeat] 的类型完全一致。Coq 可以使用类型推断 基于它们的使用方式来推出 [X]、[x] 
+    和 [count] 一定是什么类型。例如， 由于 [X] 是作为 [cons] 的参数使用的，因此它必定是个
+    [Type] 类型， 因为 [cons] 期望一个 [Type] 作为其第一个参数，而用 [0] 和 [S] 来匹配
+     [count] 意味着它必须是个 [nat]，诸如此类。
 
-    This powerful facility means we don't always have to write
-    explicit type annotations everywhere, although explicit type
-    annotations are still quite useful as documentation and sanity
-    checks, so we will continue to use them most of the time.  You
-    should try to find a balance in your own code between too many
-    type annotations (which can clutter and distract) and too
-    few (which forces readers to perform type inference in their heads
-    in order to understand your code). *)
+    这种强大的功能意味着我们不必总是在任何地方都显式地写出类型标注， 不过显式的类型标注对于
+    文档和完整性检查来说仍然非常有用， 因此我们仍会继续使用它。你应当在代码中把握好使用
+    类型标注的平衡点， 太多导致混乱并分散注意力，太少则会迫使读者为理解你的代码
+    而在大脑中进行类型推断。*)
 
 (* ----------------------------------------------------------------- *)
 (** *** Type Argument Synthesis *)
 
-(** To use a polymorphic function, we need to pass it one or
-    more types in addition to its other arguments.  For example, the
-    recursive call in the body of the [repeat] function above must
-    pass along the type [X].  But since the second argument to
-    [repeat] is an element of [X], it seems entirely obvious that the
-    first argument can only be [X] -- why should we have to write it
-    explicitly?
+(** 要使用多态函数，我们需要为其参数再额外传入一个或更多类型。 例如，前面 [repeat]
+    函数体中的递归调用必须传递类型 [X]。不过由于 [repeat] 的第二个参数为 [X] 类型
+    的元素，第一个参数明显只能是 X， 既然如此，我们何必显式地写出它呢？
 
     Fortunately, Coq permits us to avoid this kind of redundancy.  In
     place of any type argument we can write a "hole" [_], which can be
@@ -227,17 +186,16 @@ Check repeat.
     type expected by the context in which the application appears --
     to determine what concrete type should replace the [_].
 
-    This may sound similar to type annotation inference -- indeed, the
-    two procedures rely on the same underlying mechanisms.  Instead of
-    simply omitting the types of some arguments to a function, like
+    这听起来很像类型标注推断。实际上，这两种个过程依赖于同样的底层机制。 
+    除了简单地忽略函数中某些参数的类型：
 
       repeat' X x count : list X :=
 
-    we can also replace the types with [_]
+    我们还可以将类型换成 [_]：
 
       repeat' (X : _) (x : _) (count : _) : list X :=
 
-    to tell Coq to attempt to infer the missing information.
+    以此来告诉 Coq 要尝试推断出缺少的信息。
 
     Using holes, the [repeat] function can be written like this: *)
 
@@ -247,11 +205,9 @@ Fixpoint repeat'' X x count : list X :=
   | S count' => cons _ x (repeat'' _ x count')
   end.
 
-(** In this instance, we don't save much by writing [_] instead of
-    [X].  But in many cases the difference in both keystrokes and
-    readability is nontrivial.  For example, suppose we want to write
-    down a list containing the numbers [1], [2], and [3].  Instead of
-    writing this... *)
+(** 在此例中，我们写出 [_] 并没有省略多少 [X]。然而在很多情况下，
+    这对减少击键次数和提高可读性还是很有效的。例如，假设我们要写下
+    一个包含数字 1、2 和 3 的列表，此时不必写成这样： *)
 
 Definition list123 :=
   cons nat 1 (cons nat 2 (cons nat 3 (nil nat))).
@@ -264,28 +220,21 @@ Definition list123' :=
 (* ----------------------------------------------------------------- *)
 (** *** Implicit Arguments *)
 
-(** We can go further and even avoid writing [_]'s in most cases by
-    telling Coq _always_ to infer the type argument(s) of a given
-    function.
+(** 我们甚至可以通过告诉 Coq 总是推断给定函数的类型参数来避免 [_]。
 
-    The [Arguments] directive specifies the name of the function (or
-    constructor) and then lists its argument names, with curly braces
-    around any arguments to be treated as implicit.  (If some
-    arguments of a definition don't have a name, as is often the case
-    for constructors, they can be marked with a wildcard pattern
-    [_].) *)
+    [Arguments] 用于指令指定函数或构造子的名字并列出其参数名， 花括号中的
+    任何参数都会被视作隐式参数。（如果定义中的某个参数没有名字， 那么它可以
+    用通配模式 [_] 来标记。这种情况常见于构造子中。 *)
 
 Arguments nil {X}.
 Arguments cons {X} _ _.
 Arguments repeat {X} x count.
 
-(** Now, we don't have to supply type arguments at all: *)
+(** 现在我们再也不必提供类型参数了： *)
 
 Definition list123'' := cons 1 (cons 2 (cons 3 nil)).
 
-(** Alternatively, we can declare an argument to be implicit
-    when defining the function itself, by surrounding it in curly
-    braces instead of parens.  For example: *)
+(** 此外，我们还可以在定义函数时声明隐式参数， 只是需要将它放在花括号内而非圆括号中。例如： *)
 
 Fixpoint repeat''' {X : Type} (x : X) (count : nat) : list X :=
   match count with
@@ -293,30 +242,23 @@ Fixpoint repeat''' {X : Type} (x : X) (count : nat) : list X :=
   | S count' => cons x (repeat''' x count')
   end.
 
-(** (Note that we didn't even have to provide a type argument to the
-    recursive call to [repeat''']; indeed, it would be invalid to
-    provide one!)
+(** (注意我们现在甚至不必在 [repeat'''] 的递归调用中提供类型参数了，
+    实际上提供了反而是无效的！)
 
-    We will use the latter style whenever possible, but we will
-    continue to use explicit [Argument] declarations for [Inductive]
-    constructors.  The reason for this is that marking the parameter
-    of an inductive type as implicit causes it to become implicit for
-    the type itself, not just for its constructors.  For instance,
-    consider the following alternative definition of the [list]
-    type: *)
+    我们会尽可能使用最后一种风格，不过还会继续在 Inductive 构造子中
+    使用显式的 Argument 声明。原因在于如果将归纳类型的形参标为隐式的话，
+    不仅构造子的类型会变成隐式的，类型本身也会变成隐式的。例如， 考虑
+    以下 list 类型的另一种定义：*)
 
 Inductive list' {X:Type} : Type :=
   | nil'
   | cons' (x : X) (l : list').
 
-(** Because [X] is declared as implicit for the _entire_ inductive
-    definition including [list'] itself, we now have to write just
-    [list'] whether we are talking about lists of numbers or booleans
-    or anything else, rather than [list' nat] or [list' bool] or
-    whatever; this is a step too far. *)
+(** 由于 [X] 在包括 [list'] 本身的整个归纳定义中都是隐式声明的，
+    因此当我们讨论数值、布尔值或其它任何类型的列表时，都只能写 [list']，
+    而写不了 [list' nat]、[list' bool] 或其它的了，这样就跑得有点太远了。 *)
 
-(** Let's finish by re-implementing a few other standard list
-    functions on our new polymorphic lists... *)
+(** 作为本节的收尾，我们为新的多态列表重新实现几个其它的标准列表函数... *)
 
 Fixpoint app {X : Type} (l1 l2 : list X)
              : (list X) :=
@@ -343,7 +285,7 @@ Proof. reflexivity.  Qed.
 
 Example test_rev2:
   rev (cons true nil) = cons true nil.
-Proof. reflexivity.  Qed.
+Proof. simpl. reflexivity.  Qed.
 
 Example test_length1: length (cons 1 (cons 2 (cons 3 nil))) = 3.
 Proof. reflexivity.  Qed.
@@ -351,38 +293,31 @@ Proof. reflexivity.  Qed.
 (* ----------------------------------------------------------------- *)
 (** *** Supplying Type Arguments Explicitly *)
 
-(** One small problem with declaring arguments [Implicit] is
-    that, occasionally, Coq does not have enough local information to
-    determine a type argument; in such cases, we need to tell Coq that
-    we want to give the argument explicitly just this time.  For
-    example, suppose we write this: *)
+(** 用 [Implicit] 将参数声明为隐式的会有个小问题：Coq 偶尔会没有足够的
+    局部信息来确定类型参数。此时，我们需要告诉 Coq 这次我们会显示地给出参数。
+    例如，假设我们写了如下定义：*)
 
 Fail Definition mynil := nil.
 
-(** (The [Fail] qualifier that appears before [Definition] can be
-    used with _any_ command, and is used to ensure that that command
-    indeed fails when executed. If the command does fail, Coq prints
-    the corresponding error message, but continues processing the rest
-    of the file.)
+(** （[Definition] 前面的 [Fail] 限定符可用于 _任何_ 指令， 它的作用是确保该指令
+    在执行时确实会失败。如果该指令失败了，Coq 就会打印出相应的错误信息，不过之后会
+    继续处理文件中剩下的部分。）
 
-    Here, Coq gives us an error because it doesn't know what type
-    argument to supply to [nil].  We can help it by providing an
-    explicit type declaration (so that Coq has more information
-    available when it gets to the "application" of [nil]): *)
+    在这里，Coq 给出了一条错误信息，因为它不知道应该为 [nil] 提供何种类型。 我们
+    可以为它提供个显式的类型声明来帮助它，这样 Coq 在"应用" [nil] 时就有更多可用的信息了：*)
 
 Definition mynil : list nat := nil.
 
-(** Alternatively, we can force the implicit arguments to be explicit by
-   prefixing the function name with [@]. *)
+(** 此外，我们还可以在函数名前加上前缀 [@] 来强制将隐式参数变成显式的：*)
 
 Check @nil.
 
 Definition mynil' := @nil nat.
 
-(** Using argument synthesis and implicit arguments, we can
-    define convenient notation for lists, as before.  Since we have
-    made the constructor type arguments implicit, Coq will know to
-    automatically infer these when we use the notations. *)
+(** 使用参数推断和隐式参数，我们可以为列表定义和前面一样的简便记法。
+    由于我们让构造子的的类型参数变成了隐式的，因此 Coq 就知道在我们
+    使用该记法时自动推断它们了。
+ *)
 
 Notation "x :: y" := (cons x y)
                      (at level 60, right associativity).
@@ -391,7 +326,7 @@ Notation "[ x ; .. ; y ]" := (cons x .. (cons y []) ..).
 Notation "x ++ y" := (app x y)
                      (at level 60, right associativity).
 
-(** Now lists can be written just the way we'd hope: *)
+(** 现在列表就能写成我们希望的方式了： *)
 
 Definition list123''' := [1; 2; 3].
 
@@ -406,17 +341,26 @@ Definition list123''' := [1; 2; 3].
 Theorem app_nil_r : forall (X:Type), forall l:list X,
   l ++ [] = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction l as [| n l'].
+  - reflexivity.
+  - simpl. rewrite -> IHl'. reflexivity. Qed.
 
 Theorem app_assoc : forall A (l m n:list A),
   l ++ m ++ n = (l ++ m) ++ n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction l as [| n1 l1' IHl1'].
+  - reflexivity.
+  - simpl. rewrite -> IHl1'. reflexivity. Qed.
 
 Lemma app_length : forall (X:Type) (l1 l2 : list X),
   length (l1 ++ l2) = length l1 + length l2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction l1 as [| n2 l2' IHl2'].
+  - reflexivity.
+  - simpl. rewrite -> IHl2'. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (more_poly_exercises)  
@@ -426,47 +370,49 @@ Proof.
 Theorem rev_app_distr: forall X (l1 l2 : list X),
   rev (l1 ++ l2) = rev l2 ++ rev l1.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction l1 as [| n l' IHl'].
+  - simpl. rewrite -> app_nil_r. reflexivity.
+  - simpl. rewrite -> IHl'. rewrite -> app_assoc. reflexivity. Qed.
 
 Theorem rev_involutive : forall X : Type, forall l : list X,
   rev (rev l) = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction l as [| n l'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> rev_app_distr. rewrite -> IHl'. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
 (** ** Polymorphic Pairs *)
 
-(** Following the same pattern, the type definition we gave in
-    the last chapter for pairs of numbers can be generalized to
-    _polymorphic pairs_, often called _products_: *)
+(** 按照相同的模式，我们在上一章中给出的数值序对的定义可被推广为_多态序对_（Polymorphic
+    Pairs），它通常叫做_积_（Products）：*)
 
 Inductive prod (X Y : Type) : Type :=
 | pair (x : X) (y : Y).
 
 Arguments pair {X} {Y} _ _.
 
-(** As with lists, we make the type arguments implicit and define the
-    familiar concrete notation. *)
+(** 和列表一样，我们也可以将类型参数定义成隐式的， 并以此定义类似的具体记法：*)
 
 Notation "( x , y )" := (pair x y).
 
-(** We can also use the [Notation] mechanism to define the standard
-    notation for product _types_: *)
+(** 我们也可以使用 [Notation] 来定义标准的_积类型_（Product Types）记法：*)
 
 Notation "X * Y" := (prod X Y) : type_scope.
 
-(** (The annotation [: type_scope] tells Coq that this abbreviation
-    should only be used when parsing types.  This avoids a clash with
-    the multiplication symbol.) *)
+(** （标注 [: type_scope] 会告诉 Coq 该缩写只能在解析类型时使用。
+    这避免了与乘法符号的冲突。)*)
 
-(** It is easy at first to get [(x,y)] and [X*Y] confused.
-    Remember that [(x,y)] is a _value_ built from two other values,
-    while [X*Y] is a _type_ built from two other types.  If [x] has
-    type [X] and [y] has type [Y], then [(x,y)] has type [X*Y]. *)
+(** 一开始会很容易混淆 [(x,y)] 和 [X*Y]。不过要记住 [(x,y)] 是一个值，
+    它由两个其它的值构造得来；而 [X*Y] 是一个类型， 它由两个其它的类型
+    构造得来。如果 [x] 的类型为 [X] 而 [y] 的类型为 [Y]， 那么 [(x,y)]
+    的类型就是 [X*Y]。*)
 
-(** The first and second projection functions now look pretty
-    much as they would in any functional programming language. *)
+(** 第一元（first）和第二元（second）的射影函数（Projection Functions）
+    现在看起来和其它函数式编程语言中的很像了：*)
 
 Definition fst {X Y : Type} (p : X * Y) : X :=
   match p with
@@ -478,10 +424,8 @@ Definition snd {X Y : Type} (p : X * Y) : Y :=
   | (x, y) => y
   end.
 
-(** The following function takes two lists and combines them
-    into a list of pairs.  In other functional languages, it is often
-    called [zip]; we call it [combine] for consistency with Coq's
-    standard library. *)
+(** 以下函数接受两个列表，并将它们结合成一个序对的列表。 在其它函数式语言中，
+    它通常被称作 [zip]。我们为了与 Coq 的标准库保持一致， 将它命名为 [combine]。*)
 
 Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
            : list (X*Y) :=
@@ -504,7 +448,11 @@ Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
       print? 
 
     [] *)
-
+Check @combine.
+(* forall X Y : Type, list X -> list Y -> list (X * Y) *)
+Compute (combine [1;2] [false;false;true;true]).
+(* [(1, false); (2, false)] *)
+(* forall X Y : Type, list X -> list Y -> list (X * Y) *)
 (** **** Exercise: 2 stars, standard, recommended (split)  
 
     The function [split] is the right inverse of [combine]: it takes a
@@ -515,13 +463,15 @@ Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
     given unit test. *)
 
 Fixpoint split {X Y : Type} (l : list (X*Y))
-               : (list X) * (list Y)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+               : (list X) * (list Y) :=
+  match l with
+    | [] => ([], [])
+    | (x, y)::l' => (x::(fst (split l')), y::(snd (split l')))
+ end.
 
 Example test_split:
   split [(1,false);(2,false)] = ([1;2],[false;false]).
-Proof.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
