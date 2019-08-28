@@ -413,7 +413,6 @@ Definition isred (c : color) : bool :=
   | primary red => true
   | primary _ => false
   end.
-  
 
 (** The pattern [primary _] here is shorthand for "[primary] applied
     to any [rgb] constructor except [red]."  (The wildcard pattern [_]
@@ -715,9 +714,9 @@ Fixpoint factorial (n:nat) : nat :=
     | S n' => (S n') * (factorial n')
   end.
 
-Example test_factorial1:          (factorial 3) = 6.
+Example test_factorial1: (factorial 3) = 6.
 Proof. reflexivity. Qed.
-Example test_factorial2:          (factorial 5) = (mult 10 12).
+Example test_factorial2: (factorial 5) = (mult 10 12).
 Proof. reflexivity. Qed.
 (** [] *)
 
@@ -1170,6 +1169,15 @@ Proof.
   { destruct c eqn:Ec.
     { reflexivity. }
     { reflexivity. } }
+Qed.
+
+Theorem andb_communtative'' : forall b c, andb b c = andb c b.
+Proof.
+  intros [] [].
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
 Qed.
 
 (** Since curly braces mark both the beginning and the end of a
