@@ -259,6 +259,8 @@ Proof.
     constructors (e.g., [S n = O]), and it solves the current goal
     immediately.  For example: *)
 
+(** discriminate : ⊥ dans hypotheses => Resoud le but actuel *)
+
 Theorem eqb_0_l : forall n,
    0 =? n = true -> n = 0.
 Proof.
@@ -476,9 +478,8 @@ Proof.
 
 (** 当 [m] 已经在上下文中时，试图对 [n] 进行归纳来进行此证明是行不通的， 因为我们之后要尝试证明涉及每一个 n 的命题，而不只是单个 m。 *)
 
-(** The successful proof of [double_injective] leaves [m] in the goal
-    statement at the point where the [induction] tactic is invoked on
-    [n]: *)
+(** 对 [double_injective] 的成功证明将 [m] 留在了目标语句中 [induction] 
+    作用于 [n] 的地方： *)
 
 Theorem double_injective : forall n m,
      double n = double m ->
@@ -491,35 +492,29 @@ Proof.
 
   - (* n = S n' *) simpl.
 
-(** Notice that both the goal and the induction hypothesis are
-    different this time: the goal asks us to prove something more
-    general (i.e., to prove the statement for _every_ [m]), but the IH
-    is correspondingly more flexible, allowing us to choose any [m] we
-    like when we apply the IH. *)
+(** 注意，此时的证明目标和归纳假设是不同的：证明目标要求我们证明更一般的事情
+    （即为每一个 [m] 证明该语句），而归纳假设 [IH] 相应地更加灵活， 允许我们
+    在应用归纳假设时选择任何想要的 [m]。*)
 
     intros m eq.
 
-(** Now we've chosen a particular [m] and introduced the assumption
-    that [double n = double m].  Since we are doing a case analysis on
-    [n], we also need a case analysis on [m] to keep the two "in sync." *)
+(** 现在我们选择了一个具体的 [m] 并引入了假设 [double n = double m]。 由于
+    我们对 [n] 做了情况分析，因此还要对 [m] 做情况分析来保持两边"同步"。*)
 
     destruct m as [| m'] eqn:E.
     + (* m = O *) simpl.
 
-(** The 0 case is trivial: *)
+(** 0 的情况很显然：*)
 
       discriminate eq.
 
     + (* m = S m' *)
       apply f_equal.
 
-(** At this point, since we are in the second branch of the [destruct
-    m], the [m'] mentioned in the context is the predecessor of the
-    [m] we started out talking about.  Since we are also in the [S]
-    branch of the induction, this is perfect: if we instantiate the
-    generic [m] in the IH with the current [m'] (this instantiation is
-    performed automatically by the [apply] in the next step), then
-    [IHn'] gives us exactly what we need to finish the proof. *)
+(** 到这里，由于我们在 [destruct m] 的第二个分支中，因此上下文中涉及
+    到的 [m'] 就是我们开始讨论的 [m] 的前趋。由于我们也在归纳的 [S] 分支中，
+    这就很完美了： 如果我们在归纳假设中用当前的 [m']（此实例由下一步的 [apply]
+    自动产生） 实例化一般的 [m]，那么 [IHn'] 就刚好能给出我们需要的来结束此证明。*)
 
       apply IHn'. injection eq as goal. apply goal. Qed.
 
@@ -535,7 +530,14 @@ Proof.
 Theorem eqb_true : forall n m,
     n =? m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n' IH].
+  - intros m H. destruct m as [| m'].
+    + reflexivity.
+    + discriminate.
+  - intros m H. destruct m as [| m'].
+    + discriminate.
+    + simpl in H. apply IH in H.
+      rewrite H. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (eqb_true_informal)  
@@ -549,11 +551,9 @@ Proof.
 Definition manual_grade_for_informal_proof : option (nat*string) := None.
 (** [] *)
 
-(** The strategy of doing fewer [intros] before an [induction] to
-    obtain a more general IH doesn't always work by itself; sometimes
-    some _rearrangement_ of quantified variables is needed.  Suppose,
-    for example, that we wanted to prove [double_injective] by
-    induction on [m] instead of [n]. *)
+(** 在 [induction] 之前做一些 [intros] 来获得更一般归纳假设并不总是奏效。
+    有时需要对量化的变量做一下重排。例如，假设我们想要通过对 [m] 而非 [n]
+    进行归纳来证明 [double_injective]。*)
 
 Theorem double_injective_take2_FAILED : forall n m,
      double n = double m ->
@@ -569,23 +569,17 @@ Proof.
         (* Stuck again here, just like before. *)
 Abort.
 
-(** The problem is that, to do induction on [m], we must first
-    introduce [n].  (If we simply say [induction m] without
-    introducing anything first, Coq will automatically introduce [n]
-    for us!)  *)
+(** 问题在于，要对 [m] 进行归纳，我们首先必须对 [n] 归纳。
+    （如果我们不引入任何东西就执行 [induction m]，Coq 
+    就会自动为我们引入 [n]）*)
 
-(** What can we do about this?  One possibility is to rewrite the
-    statement of the lemma so that [m] is quantified before [n].  This
-    works, but it's not nice: We don't want to have to twist the
-    statements of lemmas to fit the needs of a particular strategy for
-    proving them!  Rather we want to state them in the clearest and
-    most natural way. *)
+(** 我们可以对它做什么？一种可能就是改写该引理的陈述使得 [m] 在 [n] 之前量化。
+    这样是可行的，不过它不够好：我们不想调整该引理的陈述来适应具体的证明策略！
+    我们更想以最清晰自然的方式陈述它。*)
 
-(** What we can do instead is to first introduce all the quantified
-    variables and then _re-generalize_ one or more of them,
-    selectively taking variables out of the context and putting them
-    back at the beginning of the goal.  The [generalize dependent]
-    tactic does this. *)
+(** 我们可以先引入所有量化的变量，然后重新一般化（re-generalize） 其中的一个
+    或几个，选择性地从上下文中挑出几个变量并将它们放回证明目标的开始处。 
+    用 generalize dependent 策略就能做到。*)
 
 Theorem double_injective_take2 : forall n m,
      double n = double m ->
@@ -605,11 +599,10 @@ Proof.
     + (* n = S n' *) apply f_equal.
       apply IHm'. injection eq as goal. apply goal. Qed.
 
-(** Let's look at an informal proof of this theorem.  Note that
-    the proposition we prove by induction leaves [n] quantified,
-    corresponding to the use of generalize dependent in our formal
-    proof.
+(** 我们来看一下此定理的非形式化证明。注意我们保持 [n] 的量化状态并通过归纳证明的命题，
+    对应于我们形式化证明中依赖的一般化。
 
+    _定理_：对于任何自然数 n 和 m，若 double n = double m，则 n = m。
     _Theorem_: For any nats [n] and [m], if [double n = double m], then
       [n = m].
 
