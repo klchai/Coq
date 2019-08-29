@@ -142,14 +142,17 @@ Example trans_eq_example' : forall (a b c d e f : nat),
 Proof.
   intros a b c d e f eq1 eq2.
 
-(** 如果此时我们只是告诉 Coq [apply trans_eq]，那么它会 （根据该引理的结论对证明目标的匹配）
-    说 X 应当实例化为 [[nat]]、[n] 实例化为 [[a,b]]、以及 [o] 实例化为 [[e,f]]。然而，匹配过程并没有为
-    [m]确定实例：我们必须在 [apply] 的调用后面加上 [with (m:=[c,d])] 来显式地提供一个实例 *)
+(** 如果此时我们只是告诉 Coq [apply trans_eq]，那么它会
+（根据该引理的结论对证明目标的匹配）说 X 应当实例化为 [[nat]]、[n] 
+实例化为 [[a,b]]、以及 [o] 实例化为 [[e,f]]。然而，匹配过程并没有为[m]
+确定实例：我们必须在 [apply] 的调用后面加上 [with (m:=[c,d])] 来显式地
+提供一个实例 *)
 
   apply trans_eq with (m:=[c;d]).
   apply eq1. apply eq2.   Qed.
 
-(** 实际上，我们通常不必在 [with] 从句中包含名字 [m]，Coq 一般足够聪明来确定我们给出的实例。
+(** 实际上，我们通常不必在 [with] 从句中包含名字 [m]，Coq 一般足够聪明来确定
+我们给出的实例。
     我们也可以写成： [apply trans_eq with [c;d]]。*)
 
 (** **** Exercise: 3 stars, standard, optional (apply_with_exercise)  *)
@@ -476,7 +479,8 @@ Proof.
     我们就会卡住：知道 [double (S n)] 为 10 并不能告诉我们 [double n] 是否为 10，
     因此 [Q] 是没有用的。）*)
 
-(** 当 [m] 已经在上下文中时，试图对 [n] 进行归纳来进行此证明是行不通的， 因为我们之后要尝试证明涉及每一个 n 的命题，而不只是单个 m。 *)
+(** 当 [m] 已经在上下文中时，试图对 [n] 进行归纳来进行此证明是行不通的， 因为我们之后
+要尝试证明涉及每一个 n 的命题，而不只是单个 m。 *)
 
 (** 对 [double_injective] 的成功证明将 [m] 留在了目标语句中 [induction] 
     作用于 [n] 的地方： *)
@@ -617,44 +621,35 @@ Proof.
     对应于我们形式化证明中依赖的一般化。
 
     定理：对于任何自然数 n 和 m，若 [double n = double m]，则 [n = m]。
-    
+
     证明：令 [m] 为一个 [nat]。我们通过对 m 进行归纳来证明，
     对于任何 n， 若 [double n = double m]，则 [n = m]。
-    _Proof_: Let [m] be a [nat]. We prove by induction on [m] that, for
-      any [n], if [double n = double m] then [n = m].
 
-      - First, suppose [m = 0], and suppose [n] is a number such
-        that [double n = double m].  We must show that [n = 0].
+      - 首先，设 [m = 0]，而 n 是一个数使得 [double n = double m]。我们必须证明
+        [n = 0]。
 
-        Since [m = 0], by the definition of [double] we have [double n =
-        0].  There are two cases to consider for [n].  If [n = 0] we are
-        done, since [m = 0 = n], as required.  Otherwise, if [n = S n']
-        for some [n'], we derive a contradiction: by the definition of
-        [double], we can calculate [double n = S (S (double n'))], but
-        this contradicts the assumption that [double n = 0].
+        由于 [m = 0]，根据 [double] 的定义，我们有 [double n = 0]。此时对于 [n] 
+        需要考虑两种情况。若 [n = 0]，则得证，因为 [m = 0 = n]，正如所需。 否则，
+        若对于某个 [n'] 有 [n = S n']，我们就会导出矛盾：根据 [double] 的定义，
+        我们可得出 [double n = S (S (double n'))]，但它与 [double n = 0] 相矛盾。
 
-      - Second, suppose [m = S m'] and that [n] is again a number such
-        that [double n = double m].  We must show that [n = S m'], with
-        the induction hypothesis that for every number [s], if [double s =
-        double m'] then [s = m'].
+      - 其次，设 [m = S m']，而 [n] 同样是一个数使得 [double n = double m]。
+        我们必须证明 [n = S m']，根据归纳假设，对于任何数 [s]，若
+        [double s = double m']，则 [s = m']。
 
-        By the fact that [m = S m'] and the definition of [double], we
-        have [double n = S (S (double m'))].  There are two cases to
-        consider for [n].
+        根据 [m = S m'] 的事实以及 [double] 的定义,,我们有 
+        double n = S (S (double m'))。 此时对于 n 需要考虑两种情况。
 
-        If [n = 0], then by definition [double n = 0], a contradiction.
+        若 n = 0，则根据 double n = 0 的定义会得出矛盾。
 
-        Thus, we may assume that [n = S n'] for some [n'], and again by
-        the definition of [double] we have [S (S (double n')) =
-        S (S (double m'))], which implies by injectivity that [double n' =
-        double m'].  Instantiating the induction hypothesis with [n'] thus
-        allows us to conclude that [n' = m'], and it follows immediately
-        that [S n' = S m'].  Since [S n' = n] and [S m' = m], this is just
-        what we wanted to show. [] *)
+        因此，我们假设对于某个 n'，有 n = S n'，同样根据 double 的定义，我们有 
+        S (S (double n')) = S (S (double m'))，它可通过反演 
+        double n' = double m' 得出。
+        以 n' 实例化归纳假设允许我们得出 n' = m' 的结论，显然 S n' = S m'。
+        因此 S n' = n 且 S m' = m， 此即我们所欲证 [] *)
 
-(** Before we close this section and move on to some exercises,
-    let's digress briefly and use [eqb_true] to prove a similar
-    property of identifiers that we'll need in later chapters: *)
+(** 在结束本节去做习题之前，我们先稍微跑个题，使用 eqb_true 来证明
+    一个标识符的类似性质以备后用： *)
 
 Theorem eqb_id_true : forall x y,
   eqb_id x y = true -> x = y.
@@ -672,7 +667,18 @@ Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. generalize dependent l.
+  induction n as [| n' IHn'].
+  - intros. destruct l as [| a t].
+    + reflexivity.
+    + discriminate.
+  - intros. destruct l as [| a t].
+    + reflexivity.
+    + simpl in H. injection H as H.
+      apply IHn' in H.
+      simpl. 
+      apply H.
+      Qed.  
 (** [] *)
 
 (* ################################################################# *)
@@ -801,12 +807,9 @@ Qed.
 (* ################################################################# *)
 (** * Using [destruct] on Compound Expressions *)
 
-(** We have seen many examples where [destruct] is used to
-    perform case analysis of the value of some variable.  But
-    sometimes we need to reason by cases on the result of some
-    _expression_.  We can also do this with [destruct].
-
-    Here are some examples: *)
+(** 我们已经见过许多通过 destruct 进行情况分析来处理一些变量的值了。
+    不过有时我们需要根据某些表达式的结果的情况来进行推理。
+    我们也可以用 destruct 来做这件事。*)
 
 Definition sillyfun (n : nat) : bool :=
   if n =? 3 then false
@@ -823,17 +826,15 @@ Proof.
       + (* n =? 5 = true *) reflexivity.
       + (* n =? 5 = false *) reflexivity.  Qed.
 
-(** After unfolding [sillyfun] in the above proof, we find that
-    we are stuck on [if (n =? 3) then ... else ...].  But either
-    [n] is equal to [3] or it isn't, so we can use [destruct (eqb
-    n 3)] to let us reason about the two cases.
+(** 在前面的证明中展开 sillyfun 后，我们发现卡在
+if (n =? 3) then ... else ... 上了。但由于
+n 要么等于 3 要么不等于，因此我们可以用 destruct (eqb n 3) 
+来对这两种情况进行推理。
 
-    In general, the [destruct] tactic can be used to perform case
-    analysis of the results of arbitrary computations.  If [e] is an
-    expression whose type is some inductively defined type [T], then,
-    for each constructor [c] of [T], [destruct e] generates a subgoal
-    in which all occurrences of [e] (in the goal and in the context)
-    are replaced by [c]. *)
+通常，destruct 策略可用于对任何计算结果进行情况分析。
+如果 e 是某个表达式，其类型为归纳定义的类型 T，那么
+对于 T 的每个构造子 c，destruct e 都会生成一个子目标，
+其中（即目标和上下文中）所有的 e 都会被替换成 c。*)
 
 (** **** Exercise: 3 stars, standard, optional (combine_split)  
 
@@ -857,7 +858,17 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y l. induction l as [| h t IH].
+  - intros l1 l2 H. injection H as H1 H2.
+    rewrite <- H1. rewrite <- H2.
+    reflexivity.
+  - intros l1' l2' H. destruct h as [a b].
+    simpl in H.
+    destruct (split t) as [t1 t2].
+    injection H as H1 H2.
+    rewrite <- H1. rewrite <- H2.
+    simpl.
+    rewrite -> IH. reflexivity. reflexivity. Qed.
 (** [] *)
 
 (** The [eqn:] part of the [destruct] tactic is optional: We've chosen
@@ -933,61 +944,65 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b.
+  destruct (f true) eqn:Et.
+  - destruct (f false) eqn:Ef.
+    + destruct b eqn:Eb.
+      * rewrite -> Et. rewrite -> Et. rewrite -> Et. reflexivity.
+      * rewrite -> Ef. rewrite -> Et. rewrite -> Et. reflexivity.
+    + destruct b eqn:Eb.
+      * rewrite -> Et. rewrite -> Et. rewrite -> Et. reflexivity.
+      * rewrite -> Ef. rewrite -> Ef. rewrite -> Ef. reflexivity.
+  - destruct (f false) eqn:Ef.
+    + destruct b eqn:Eb.
+      * rewrite -> Et. rewrite -> Ef. rewrite -> Et. reflexivity.
+      * rewrite -> Ef. rewrite -> Et. rewrite -> Ef. reflexivity.
+    + destruct b eqn:Eb.
+      * rewrite -> Et. rewrite -> Ef. rewrite -> Ef. reflexivity.
+      * rewrite -> Ef. rewrite -> Ef. rewrite -> Ef. reflexivity.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
 (** * Review *)
 
-(** We've now seen many of Coq's most fundamental tactics.  We'll
-    introduce a few more in the coming chapters, and later on we'll
-    see some more powerful _automation_ tactics that make Coq help us
-    with low-level details.  But basically we've got what we need to
-    get work done.
+(** 现在我们已经见过 Coq 中最基础的策略了。未来的章节中我们还会介绍更多， 
+    之后我们会看到一些更加强大的自动化策略，它能让 Coq 帮我们处理底层的细节。 
+    不过基本上我们已经有了完成工作所需的东西。
 
-    Here are the ones we've seen:
+    下面是我们已经见过的：
 
-      - [intros]: move hypotheses/variables from goal to context
+      - [intros]: 将前提/变量从证明目标移到上下文中
 
-      - [reflexivity]: finish the proof (when the goal looks like [e =
-        e])
+      - [reflexivity]: （当目标形如 e = e 时）结束证明
 
-      - [apply]: prove goal using a hypothesis, lemma, or constructor
+      - [apply]: 用前提、引理或构造子证明目标
 
-      - [apply... in H]: apply a hypothesis, lemma, or constructor to
-        a hypothesis in the context (forward reasoning)
+      - [apply... in H]: 将前提、引理或构造子应用到上下文中的假设上（正向推理）
 
-      - [apply... with...]: explicitly specify values for variables
-        that cannot be determined by pattern matching
+      - [apply... with...]: 为无法被模式匹配确定的变量显式指定值
 
-      - [simpl]: simplify computations in the goal
+      - [simpl]: 化简目标中的计算
 
-      - [simpl in H]: ... or a hypothesis
+      - [simpl in H]: 化简前提中的计算
 
-      - [rewrite]: use an equality hypothesis (or lemma) to rewrite
-        the goal
+      - [rewrite]: 使用相等关系假设（或引理）来改写目标
 
-      - [rewrite ... in H]: ... or a hypothesis
+      - [rewrite ... in H]: 使用相等关系假设（或引理）来改写前提
 
-      - [symmetry]: changes a goal of the form [t=u] into [u=t]
+      - [symmetry]: 将形如 t=u 的目标改为 u=t
 
-      - [symmetry in H]: changes a hypothesis of the form [t=u] into
-        [u=t]
+      - [symmetry in H]: 将形如 t=u 的前提改为 u=t
 
-      - [unfold]: replace a defined constant by its right-hand side in
-        the goal
+      - [unfold]: 用目标中的右式替换定义的常量
 
-      - [unfold... in H]: ... or a hypothesis
+      - [unfold... in H]: 用前提中的右式替换定义的常量
 
-      - [destruct... as...]: case analysis on values of inductively
-        defined types
+      - [destruct... as...]: 对归纳定义类型的值进行情况分析
 
-      - [destruct... eqn:...]: specify the name of an equation to be
-        added to the context, recording the result of the case
-        analysis
+      - [destruct... eqn:...]: 为添加到上下文中的等式指定名字， 记录情况分析的结果
 
-      - [induction... as...]: induction on values of inductively
-        defined types
+      - [induction... as...]: 对归纳定义类型的值进行归纳
 
       - [injection]: reason by injectivity on equalities
         between values of inductively defined types
@@ -995,12 +1010,10 @@ Proof.
       - [discriminate]: reason by disjointness of constructors on
         equalities between values of inductively defined types
 
-      - [assert (H: e)] (or [assert (e) as H]): introduce a "local
-        lemma" [e] and call it [H]
+      - [assert (H: e)] 引入"局部引理" e 并称之为 H
 
-      - [generalize dependent x]: move the variable [x] (and anything
-        else that depends on it) from the context back to an explicit
-        hypothesis in the goal formula *)
+      - [generalize dependent x]: 将变量 x（以及任何依赖它的东西）
+        从上下文中移回目标公式内的前提中 *)
 
 (* ################################################################# *)
 (** * Additional Exercises *)
@@ -1009,7 +1022,18 @@ Proof.
 Theorem eqb_sym : forall (n m : nat),
   (n =? m) = (m =? n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intro n.
+  induction n as [| n' IH].
+  - intro m.
+    destruct m as [| m'].
+    + reflexivity.
+    + reflexivity.
+  - intro m.
+    destruct m as [| m'].
+    + reflexivity.
+    + simpl. apply IH.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, optional (eqb_sym_informal)  
@@ -1047,14 +1071,41 @@ Proof.
     things than necessary.  Hint: what property do you need of [l1]
     and [l2] for [split (combine l1 l2) = (l1,l2)] to be true?) *)
 
-Definition split_combine_statement : Prop
-  (* ("[: Prop]" means that we are giving a name to a
-     logical proposition here.) *)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition split_combine_statement : Prop :=
+  forall (X Y: Type) (l: list (X * Y)) (l1: list X) (l2: list Y),
+  combine l1  l2 = l ->
+  length l1 = length l2 ->
+  split l = (l1, l2).
 
 Theorem split_combine : split_combine_statement.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros X Y l.
+  induction l as [| (a, b) t IH].
+  - intros l1 l2 H1 H2.
+    destruct l1.
+    + destruct l2.
+      * reflexivity.
+      * discriminate.
+    + destruct l2.
+      * discriminate.
+      * discriminate.
+  - intros l1' l2' H1 H2.
+    simpl.
+    destruct (split t) as [t1 t2].
+    destruct l1'.
+    + discriminate.
+    + destruct l2'.
+      * discriminate.
+      * simpl in H1.
+        injection H1 as H1'1 H1'2 H1'3.
+        simpl in H2.
+        injection H2 as H2.
+        pose (H3 := IH _ _ H1'3 H2).
+        injection H3 as H3'1 H3'2.
+        rewrite -> H3'1, H3'2.
+        rewrite -> H1'1, H1'2.
+        reflexivity.
+Qed.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_split_combine : option (nat*string) := None.
@@ -1070,7 +1121,22 @@ Theorem filter_exercise : forall (X : Type) (test : X -> bool)
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X test x l.
+
+  induction l as [| a t IH].
+  - discriminate.
+  - intros lf H.
+    destruct (test a) eqn:E.
+    + simpl in H.
+      rewrite -> E in H.
+      injection H as H'1 H'2.
+      rewrite <- H'1.
+      apply E.
+    + simpl in H.
+      rewrite -> E in H.
+      apply (IH lf).
+      apply H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, recommended (forall_exists_challenge)  
@@ -1104,45 +1170,59 @@ Proof.
     Finally, prove a theorem [existsb_existsb'] stating that
     [existsb'] and [existsb] have the same behavior. *)
 
-Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
+  match l with
+  | [] => true
+  | a :: t => test a && forallb test t
+  end.
 
 Example test_forallb_1 : forallb oddb [1;3;5;7;9] = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_forallb_2 : forallb negb [false;false] = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_forallb_3 : forallb evenb [0;2;4;5] = false.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_forallb_4 : forallb (eqb 5) [] = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
-Fixpoint existsb {X : Type} (test : X -> bool) (l : list X) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint existsb {X : Type} (test : X -> bool) (l : list X) : bool :=
+  match l with
+  | [] => false
+  | a :: t => test a || existsb test t
+  end.
 
 Example test_existsb_1 : existsb (eqb 5) [0;2;3;6] = false.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_existsb_2 : existsb (andb true) [true;true;false] = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_existsb_3 : existsb oddb [1;0;0;0;0;3] = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_existsb_4 : existsb evenb [] = false.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
-Definition existsb' {X : Type} (test : X -> bool) (l : list X) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition existsb' {X : Type} (test : X -> bool) (l : list X) : bool :=
+  negb (forallb (fun (x: X) => negb (test x)) l).
 
 Theorem existsb_existsb' : forall (X : Type) (test : X -> bool) (l : list X),
   existsb test l = existsb' test l.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  intros X test l.
+  induction l as [| a t IH].
+  - reflexivity.
+  - simpl. unfold existsb', forallb.
+    destruct (test a) eqn:E.
+    + reflexivity.
+    + simpl. rewrite -> IH. reflexivity.
+Qed.
 
 (** [] *)
 
 
 
-(* Wed Jan 9 12:02:44 EST 2019 *)
+(* Thu Aug 29 23:13 EST 2019 *)
