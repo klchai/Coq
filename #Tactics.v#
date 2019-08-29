@@ -51,8 +51,7 @@ Proof.
     [apply eq2] 时，[eq2] 中的通用变量 [q] 会以 [n] 实例化，
     而 [r] 会以 [m] 实例化.*)
 
-Theorem silly2a : forall (n m : nat),
-     (n,n) = (m,m)  ->
+Theorem silly2a : forall (n m : nat),     (n,n) = (
      (forall (q r : nat), (q,q) = (r,r) -> [q] = [r]) ->
      [n] = [m].
 Proof.
