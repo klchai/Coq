@@ -1,5 +1,6 @@
 # SOFTWARE FOUNDATIONS
-
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)</br>
+![Mathinfoly](http://www.mathinfoly.org/assets/img/logo/logomathinfoly2.png)
 This repository contains:
 1. **Coq scripts** (.v files) for the Software Foundations electronic textbook.
 2. **Solutions** of all exercises.
@@ -36,21 +37,22 @@ The course will also give an overview of the practical successes of functional p
 We will end with an introduction to the Curry-Howard correspondence, a deep and beautiful connection between functional programs and logical proofs, which lies at the heart of the Coq proof assistant.
 
 ## Book
-We will follow a slightly modified version of the Logical Foundations book, which is available [here](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/index.html).
+- We will follow a slightly modified version of the Logical Foundations book, which is available [here](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/index.html).
+- Chinese Version is available [here](https://coq-zh.github.io/SF-zh/lf-current/index.html).
 
 ## Slides
 - Tuesday, 27 August 2019:
-   + 14h00--16h00 Lecture: Motivation ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/Motivation.pdf)), Basics ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Basics.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Basics.v)), Induction ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Induction.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Induction.v))
+   + 14h00--16h00 Lecture: Motivation ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/Motivation.pdf)), [Basics](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Basics.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Basics.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Basics.v)), [Induction](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Induction.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Induction.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Induction.v))
 
 - Wednesday, 28 August 2019:
    + 9h00--10h30 Exercises Basic + Induction
-   +11h00--12h30 Lecture: Lists (slides, exercises, solutions), Poly (slides, exercises, solutions), Tactics (slides, exercises)
+   + 11h00--12h30 Lecture: [Lists](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Lists.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Lists.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Lists.v)), [Poly](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Poly.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Poly.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Poly.v)), [Tactics](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Tactics.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Tactics.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Tactics.v))
 
 - Thursday, 29 August 2019:
    + 9h00--10h30 Exercises Lists + Poly + Tactics
-   + 11h00--13h00 Lecture: Logic (slides, exercises)
-   + 15h00--16h30 Lecture: IndProp (slides, exercises)
+   + 11h00--13h00 Lecture: [Logic](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Logic.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Logic.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Logic.v))
+   + 15h00--16h30 Lecture: [IndProp](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/IndProp.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/IndProp.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/IndProp.v))
 
 - Friday, 30 August 2019:
    + 9h00--10h30 Exercises Tactics + Logic + IndProp
-   + 11h00--12h00 Lecture: ProofObjects (slides, exercises)
+   + 11h00--12h00 Lecture: [ProofObjects](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/ProofObjects.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.v))
