@@ -1,7 +1,6 @@
 # SOFTWARE FOUNDATIONS
 
 This repository contains:
-
 1. **Coq scripts** (.v files) for the Software Foundations electronic textbook.
 2. **Solutions** of all exercises.
 3. **Slides** in .html format.
@@ -9,16 +8,25 @@ This repository contains:
 ## Table of Contents
 
 - [Background](#background)
+- [Install](#install)
 - [Abstract](#abstract)
-- [Book](#logical foundations book)
+- [Book](#logicalfoundationsbook)
 
 ## Background
 Course at Summer School on Cryptography, Blockchain and Program Verification [Mathinfoly 2019](http://www.mathinfoly.org/)
 at INSA Lyon on 27-31 August 2019. </br></br>
 **Teaching Team**: [Cătălin Hriţcu](http://prosecco.gforge.inria.fr/personal/hritcu/), [Roberto Blanco](https://robblanco.github.io/), [Florian Groult](https://github.com/floriangru), [Jérémy Thibault](http://perso.eleves.ens-rennes.fr/people/Jeremy.Thibault/), [Exequiel Rivas](https://dcc.fceia.unr.edu.ar/~erivas/), and various local helpers.
 
+## Install
+This project uses [Coq](https://coq.inria.fr/). Go check them out if you don't have them locally installed.
+compile each file <filename>.v by using `coqc -Q . LF <filename>.v`.
+
 ## Abstract
-This course will give a gentle introduction to: **1. logic and proofs**, **2. functional programming**, and **3. program verification**.
+This course will give a gentle introduction to: 
+1. logic and proofs
+2. functional programming
+3. program verification
+
 The most interesting aspect of this course is the use of the Coq proof assistant to write functional programs and to prove
 logical theorems about these programs, in a way that is one hundred percent formalized and machine-checked. 
 </br></br>
