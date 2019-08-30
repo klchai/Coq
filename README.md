@@ -1,6 +1,6 @@
 # SOFTWARE FOUNDATIONS
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)</br>
-![Mathinfoly](http://www.mathinfoly.org/assets/img/logo/logomathinfoly2.png)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+![Mathinfoly](http://www.mathinfoly.org/assets/img/logo/logomathinfoly2.png)</br></br>
 This repository contains:
 1. **Coq scripts** (.v files) for the Software Foundations electronic textbook.
 2. **Solutions** of all exercises.
