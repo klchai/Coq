@@ -10,7 +10,8 @@ This repository contains:
 - [Background](#background)
 - [Install](#install)
 - [Abstract](#abstract)
-- [Book](#logicalfoundationsbook)
+- [Book](#book)
+- [Slides](#slides)
 
 ## Background
 Course at Summer School on Cryptography, Blockchain and Program Verification [Mathinfoly 2019](http://www.mathinfoly.org/)
@@ -18,8 +19,7 @@ at INSA Lyon on 27-31 August 2019. </br></br>
 **Teaching Team**: [Cătălin Hriţcu](http://prosecco.gforge.inria.fr/personal/hritcu/), [Roberto Blanco](https://robblanco.github.io/), [Florian Groult](https://github.com/floriangru), [Jérémy Thibault](http://perso.eleves.ens-rennes.fr/people/Jeremy.Thibault/), [Exequiel Rivas](https://dcc.fceia.unr.edu.ar/~erivas/), and various local helpers.
 
 ## Install
-This project uses [Coq](https://coq.inria.fr/). Go check them out if you don't have them locally installed.
-compile each file <filename>.v by using `coqc -Q . LF <filename>.v`.
+This project uses [Coq](https://coq.inria.fr/). Go check them out if you don't have them locally installed. Compile each file `<filename>.v` by using `coqc -Q . LF <filename>.v`.
 
 ## Abstract
 This course will give a gentle introduction to: 
@@ -35,5 +35,22 @@ The students will learn the most by solving Coq exercises, from very simple to m
 The course will also give an overview of the practical successes of functional programming (e.g., the Tezos blockchain implementation is written in OCaml) and of verification in proof assistants like [Coq](https://coq.inria.fr/) (from machine-checked proofs of mathematical results such as the 4-color theorem to the CompCert verified compiler). </br></br>
 We will end with an introduction to the Curry-Howard correspondence, a deep and beautiful connection between functional programs and logical proofs, which lies at the heart of the Coq proof assistant.
 
-## Logical Foundations Book
+## Book
 We will follow a slightly modified version of the Logical Foundations book, which is available [here](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/index.html).
+
+## Slides
+- Tuesday, 27 August 2019:
+   + 14h00--16h00 Lecture: Motivation ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/Motivation.pdf)), Basics ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Basics.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Basics.v)), Induction ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/Induction.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/Induction.v))
+
+- Wednesday, 28 August 2019:
+   + 9h00--10h30 Exercises Basic + Induction
+   +11h00--12h30 Lecture: Lists (slides, exercises, solutions), Poly (slides, exercises, solutions), Tactics (slides, exercises)
+
+- Thursday, 29 August 2019:
+   + 9h00--10h30 Exercises Lists + Poly + Tactics
+   + 11h00--13h00 Lecture: Logic (slides, exercises)
+   + 15h00--16h30 Lecture: IndProp (slides, exercises)
+
+- Friday, 30 August 2019:
+   + 9h00--10h30 Exercises Tactics + Logic + IndProp
+   + 11h00--12h00 Lecture: ProofObjects (slides, exercises)
