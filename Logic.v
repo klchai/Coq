@@ -3,21 +3,15 @@
 Set Warnings "-notation-overridden,-parsing".
 From LF Require Export Tactics.
 
-(** In previous chapters, we have seen many examples of factual
-    claims (_propositions_) and ways of presenting evidence of their
-    truth (_proofs_).  In particular, we have worked extensively with
-    _equality propositions_ of the form [e1 = e2], with
-    implications ([P -> Q]), and with quantified propositions ([forall
-    x, P]).  In this chapter, we will see how Coq can be used to carry
-    out other familiar forms of logical reasoning.
+(** 在前面的章节中，我们已经见过很多对事实的断言（即命题） 以及如何用证据
+    展示其正确性（即证明）的例子了。特别是， 我们证明了大量形如 e1 = e2
+    的相等关系命题、形如 P → Q 的蕴含式、以及形如 ∀ x, P x 的量化命题。
 
-    Before diving into details, let's talk a bit about the status of
-    mathematical statements in Coq.  Recall that Coq is a _typed_
-    language, which means that every sensible expression in its world
-    has an associated type.  Logical claims are no exception: any
-    statement we might try to prove in Coq has a type, namely [Prop],
-    the type of _propositions_.  We can see this with the [Check]
-    command: *)
+    在深入细节之前，我们先来探讨一下 Coq 中数学表达式的地位。
+    回忆一下，Coq 是一门拥有类型的语言，也就是说，一切有意义的表达式都具有
+    一个相应的类型。逻辑表达也不例外，我们试图在 Coq 中证明的一切语句都有
+    名为 Prop 的类型，即命题类型。我们 可以用 Check 指令来查看：
+*)
 
 Check 3 = 3.
 (* ===> Prop *)
@@ -25,11 +19,8 @@ Check 3 = 3.
 Check forall n m : nat, n + m = m + n.
 (* ===> Prop *)
 
-(** Note that _all_ syntactically well-formed propositions have type
-    [Prop] in Coq, regardless of whether they are true. *)
-
-(** Simply _being_ a proposition is one thing; being _provable_ is
-    something else! *)
+(** 注意：所有语法形式良好的命题，无论是否为真，其类型均为 Prop。
+    简单来说，是一个命题与该命题可以证明是两回事。*)
 
 Check 2 = 2.
 (* ===> Prop *)
@@ -40,39 +31,34 @@ Check forall n : nat, n = 2.
 Check 3 = 4.
 (* ===> Prop *)
 
-(** Indeed, propositions don't just have types: they are
-    _first-class objects_ that can be manipulated in the same ways as
-    the other entities in Coq's world. *)
+(** 除了拥有类型之外，命题还是一等对象（First-Class Object）， 
+    即在 Coq 的世界中，我们可以像操作其它实体那样操作命题。*)
 
-(** So far, we've seen one primary place that propositions can appear:
-    in [Theorem] (and [Lemma] and [Example]) declarations. *)
+(** 到目前为止，我们已经知道命题可以出现在 Theorem
+    （还有 Lemma 以及 Example）的声明中了。*)
 
 Theorem plus_2_2_is_4 :
   2 + 2 = 4.
 Proof. reflexivity.  Qed.
 
-(** But propositions can be used in many other ways.  For example, we
-    can give a name to a proposition using a [Definition], just as we
-    have given names to expressions of other sorts. *)
+(** 不过命题还可以用在其它地方。例如，我们可以用 Definition 
+    为命题取名，就像为其它表达式取名一样。*)
 
 Definition plus_fact : Prop := 2 + 2 = 4.
 Check plus_fact.
 (* ===> plus_fact : Prop *)
 
-(** We can later use this name in any situation where a proposition is
-    expected -- for example, as the claim in a [Theorem] declaration. *)
+(** 之后我们可以在任何需要此命题的地方使用它们名字
+    例如，作为一个 Theorem 声明中的断言： *)
 
 Theorem plus_fact_is_true :
   plus_fact.
 Proof. reflexivity.  Qed.
 
-(** We can also write _parameterized_ propositions -- that is,
-    functions that take arguments of some type and return a
-    proposition. *)
+(** 我们也可以写出参数化的命题
+    也就是一个接受某些类型的参数， 然后返回一个命题的函数。*)
 
-(** For instance, the following function takes a number
-    and returns a proposition asserting that this number is equal to
-    three: *)
+(** 例如，以下函数接受某个数字，返回一个命题断言该数字等于 3：*)
 
 Definition is_three (n : nat) : Prop :=
   n = 3.
