@@ -56,7 +56,7 @@ We will end with an introduction to the Curry-Howard correspondence, a deep and 
 
 - Friday, 30 August 2019:
    + 9h00--10h30 Exercises Tactics + Logic + IndProp
-   + 11h00--12h00 Lecture: [ProofObjects](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/ProofObjects.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.v))
+   + 11h00--12h00 Lecture: [Multi](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/Multi.v), [ProofObjects](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/ProofObjects.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.v))
 
 ## Extra
 If you are interested in verifying functional programs **with effects**, have a loof at [F*](https://www.fstar-lang.org).
