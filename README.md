@@ -13,9 +13,10 @@ This repository contains:
 - [Abstract](#abstract)
 - [Book](#book)
 - [Slides](#slides)
+- [Extra](#extra)
 
 ## Background
-Course at Summer School on Cryptography, Blockchain and Program Verification [Mathinfoly 2019](http://www.mathinfoly.org/)
+[Course](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/) at Summer School on Cryptography, Blockchain and Program Verification [Mathinfoly 2019](http://www.mathinfoly.org/)
 at INSA Lyon on 27-31 August 2019. </br></br>
 **Teaching Team**: [Cătălin Hriţcu](http://prosecco.gforge.inria.fr/personal/hritcu/), [Roberto Blanco](https://robblanco.github.io/), [Florian Groult](https://github.com/floriangru), [Jérémy Thibault](http://perso.eleves.ens-rennes.fr/people/Jeremy.Thibault/), [Exequiel Rivas](https://dcc.fceia.unr.edu.ar/~erivas/), and various local helpers.
 
@@ -56,3 +57,6 @@ We will end with an introduction to the Curry-Howard correspondence, a deep and 
 - Friday, 30 August 2019:
    + 9h00--10h30 Exercises Tactics + Logic + IndProp
    + 11h00--12h00 Lecture: [ProofObjects](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.html) ([slides](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/slides/ProofObjects.html), [exercises](https://prosecco.gforge.inria.fr/personal/hritcu/teaching/lyon2019/book/lf-current/ProofObjects.v))
+
+## Extra
+If you are interested in verifying functional programs **with effects**, have a loof at [F*](https://www.fstar-lang.org).
